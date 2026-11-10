@@ -1,0 +1,266 @@
+@import 'tailwindcss';
+
+/* Fuentes auto-alojadas (funcionan sin señal). Licencias OFL en src/assets/fonts. */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../assets/fonts/inter-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Fraunces Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('../assets/fonts/fraunces-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ── Colores: claro (por defecto) ───────────────────────────────── */
+:root {
+  --c-bg: #fbf6ee; /* crema, papel amate claro */
+  --c-surface: #ffffff;
+  --c-sunken: #f4ece0;
+  --c-line: #e8dccb;
+  --c-fg: #1e1b18;
+  --c-muted: #685e54; /* 5,6:1 sobre crema */
+
+  --c-rosa: #e4007c; /* acentos grandes, íconos */
+  --c-rosa-ink: #c0006a; /* texto y botones con texto blanco: 5,6:1 */
+  --c-rosa-soft: #fde4f1;
+  --c-verde: #006847; /* hecho, confirmado */
+  --c-verde-soft: #dcefe6;
+  --c-rojo: #ce1126; /* vencido, alertas */
+  --c-rojo-soft: #fbe2e4;
+  --c-cempa: #f2a900; /* opcional, estimado (fondo o borde; el texto va en cempa-ink) */
+  --c-cempa-ink: #8a5a00;
+  --c-cempa-soft: #fdf0cc;
+  --c-azul: #1f3a93; /* transporte y vuelos */
+  --c-azul-soft: #e2e8f8;
+  --c-turquesa: #00a6a6; /* cenotes, agua, Yucatán */
+  --c-turquesa-ink: #006f6f;
+  --c-turquesa-soft: #d6f1f0;
+
+  --c-shadow: 30 27 24;
+  color-scheme: light;
+}
+
+/* ── Oscuro: por sistema o elegido en Ajustes ───────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --c-bg: #15110e;
+    --c-surface: #211b17;
+    --c-sunken: #1a1511;
+    --c-line: #382f28;
+    --c-fg: #f5efe7;
+    --c-muted: #b5a99b;
+    --c-rosa: #ff4fa8;
+    --c-rosa-ink: #ff6bb6;
+    --c-rosa-soft: #3d1529;
+    --c-verde: #3fbf8a;
+    --c-verde-soft: #123326;
+    --c-rojo: #ff6b6b;
+    --c-rojo-soft: #3d1a1a;
+    --c-cempa: #f2b630;
+    --c-cempa-ink: #f5c55a;
+    --c-cempa-soft: #3a2c0c;
+    --c-azul: #8ea6ff;
+    --c-azul-soft: #1b2340;
+    --c-turquesa: #3fd0d0;
+    --c-turquesa-ink: #5fdcdc;
+    --c-turquesa-soft: #0f3333;
+    --c-shadow: 0 0 0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --c-bg: #15110e;
+  --c-surface: #211b17;
+  --c-sunken: #1a1511;
+  --c-line: #382f28;
+  --c-fg: #f5efe7;
+  --c-muted: #b5a99b;
+  --c-rosa: #ff4fa8;
+  --c-rosa-ink: #ff6bb6;
+  --c-rosa-soft: #3d1529;
+  --c-verde: #3fbf8a;
+  --c-verde-soft: #123326;
+  --c-rojo: #ff6b6b;
+  --c-rojo-soft: #3d1a1a;
+  --c-cempa: #f2b630;
+  --c-cempa-ink: #f5c55a;
+  --c-cempa-soft: #3a2c0c;
+  --c-azul: #8ea6ff;
+  --c-azul-soft: #1b2340;
+  --c-turquesa: #3fd0d0;
+  --c-turquesa-ink: #5fdcdc;
+  --c-turquesa-soft: #0f3333;
+  --c-shadow: 0 0 0;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  --color-transparent: transparent;
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-sunken: var(--c-sunken);
+  --color-line: var(--c-line);
+  --color-fg: var(--c-fg);
+  --color-muted: var(--c-muted);
+  --color-rosa: var(--c-rosa);
+  --color-rosa-ink: var(--c-rosa-ink);
+  --color-rosa-soft: var(--c-rosa-soft);
+  --color-verde: var(--c-verde);
+  --color-verde-soft: var(--c-verde-soft);
+  --color-rojo: var(--c-rojo);
+  --color-rojo-soft: var(--c-rojo-soft);
+  --color-cempa: var(--c-cempa);
+  --color-cempa-ink: var(--c-cempa-ink);
+  --color-cempa-soft: var(--c-cempa-soft);
+  --color-azul: var(--c-azul);
+  --color-azul-soft: var(--c-azul-soft);
+  --color-turquesa: var(--c-turquesa);
+  --color-turquesa-ink: var(--c-turquesa-ink);
+  --color-turquesa-soft: var(--c-turquesa-soft);
+}
+
+@theme {
+  --font-sans: 'Inter Variable', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+
+  --radius-card: 16px;
+  --radius-sheet: 22px;
+  --ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --animate-fade-in: fade-in 180ms ease-out both;
+  --animate-fade-out: fade-out 180ms ease-in both;
+  --animate-sheet-in: sheet-in 240ms var(--ease-soft) both;
+  --animate-sheet-out: sheet-out 200ms ease-in both;
+  --animate-check: check-pop 320ms var(--ease-soft) both;
+  --animate-rise: rise 220ms var(--ease-soft) both;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes sheet-in {
+    from {
+      transform: translateY(100%);
+    }
+  }
+  @keyframes fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes sheet-out {
+    to {
+      transform: translateY(100%);
+    }
+  }
+  @keyframes check-pop {
+    0% {
+      transform: scale(0.6);
+    }
+    60% {
+      transform: scale(1.15);
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+}
+
+:root {
+  --tabbar-h: 60px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    background: var(--color-bg);
+  }
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+    background: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  input,
+  textarea,
+  select {
+    font-size: max(16px, 1em);
+  }
+  button {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-rosa);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--color-rosa) 25%, transparent);
+  }
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@utility scroll-area {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility card {
+  background: var(--color-surface);
+  border-radius: var(--radius-card);
+  box-shadow:
+    0 1px 2px rgb(var(--c-shadow) / 0.06),
+    0 4px 16px rgb(var(--c-shadow) / 0.05);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
