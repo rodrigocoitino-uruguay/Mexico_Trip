@@ -8,6 +8,7 @@ import { Dias } from '../features/dias/Dias';
 import { Hoy } from '../features/hoy/Hoy';
 import { Lugares } from '../features/lugares/Lugares';
 import { Reservas } from '../features/reservas/Reservas';
+import { fechaSimulada } from '../lib/reloj';
 import { requestPersistentStorage, useVisualViewportVars } from '../lib/viewport';
 import { Mas } from '../features/mas/Mas';
 import { useUI } from '../store/ui';
@@ -63,6 +64,7 @@ export function App() {
       <SideNav />
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="shrink-0 bg-bg" style={{ paddingTop: 'var(--safe-top)' }}>
+          <BannerSimulacion />
           <PapelPicado />
           <h1 className="mx-auto max-w-5xl px-4 pt-1 pb-2 font-display text-[28px] font-semibold tracking-tight">
             {titulo}
@@ -82,5 +84,27 @@ export function App() {
       <Toaster />
       <UpdatePrompt />
     </div>
+  );
+}
+
+/** Aviso fijo mientras se simula una fecha con ?ahora=… (para probar la app en un día del viaje). */
+function BannerSimulacion() {
+  const d = fechaSimulada();
+  if (!d) return null;
+  const txt = new Intl.DateTimeFormat('es-UY', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'America/Mexico_City',
+  }).format(d);
+  return (
+    <a
+      href={location.pathname}
+      className="block bg-cempa px-4 py-1.5 text-center text-[14px] font-semibold text-black"
+    >
+      Simulando {txt} (hora de CDMX) · tocá para salir
+    </a>
   );
 }

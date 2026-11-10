@@ -76,7 +76,7 @@ npm run preview # sirve dist/ (el build real, con modo sin conexión)
 ```
 
 - Probar en el celular por Wi-Fi: `npm run dev:iphone` y abrir la dirección `Network:` que muestra Vite.
-- Simular un día del viaje (solo en modo desarrollo): agregá `?ahora=2027-02-15T10:00-06:00` a la dirección.
+- Simular un día del viaje (también en la app publicada): agregá `?ahora=2027-02-15T10:00-06:00` a la dirección. Arriba aparece un cartel naranja "Simulando…"; tocalo para volver a la fecha real.
 
 Regenerar los íconos (no es parte del build): `npm i --no-save sharp && node scripts/generate-icons.mjs`.
 
