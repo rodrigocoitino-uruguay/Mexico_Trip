@@ -3,6 +3,7 @@ import { Search, X } from 'lucide-react';
 import { RESUMEN } from '../../data/seed';
 import { db } from '../../db/db';
 import type { Ciudad, CiudadAlojamiento, Lugar, TipoLugar } from '../../domain/types';
+import { t } from '../../i18n';
 import { cx } from '../../lib/cx';
 import { diaCorto } from '../../lib/fechas';
 import { coincide } from '../../lib/texto';
@@ -12,20 +13,20 @@ import { LugarCard } from './LugarCard';
 import { Transporte } from './Transporte';
 
 const SUBS: { id: SubLugares; label: string }[] = [
-  { id: 'atraccion', label: 'Atracciones' },
-  { id: 'comida', label: 'Comida' },
-  { id: 'noche', label: 'Noche' },
-  { id: 'alojamiento', label: 'Alojamiento' },
-  { id: 'transporte', label: 'Transporte' },
+  { id: 'atraccion', label: t('Atracciones', 'Attractions') },
+  { id: 'comida', label: t('Comida', 'Food') },
+  { id: 'noche', label: t('Noche', 'Nightlife') },
+  { id: 'alojamiento', label: t('Alojamiento', 'Lodging') },
+  { id: 'transporte', label: t('Transporte', 'Transport') },
 ];
 
 const FILTROS: { id: string; label: string; ciudades: Ciudad[] }[] = [
-  { id: 'todas', label: 'Todas', ciudades: [] },
+  { id: 'todas', label: t('Todas', 'All'), ciudades: [] },
   { id: 'CDMX', label: 'CDMX', ciudades: ['CDMX'] },
   { id: 'Mérida', label: 'Mérida', ciudades: ['Mérida'] },
   { id: 'Izamal', label: 'Izamal', ciudades: ['Izamal/Valladolid'] },
   { id: 'Valladolid', label: 'Valladolid', ciudades: ['Valladolid'] },
-  { id: 'Cancún', label: 'Cancún y Cozumel', ciudades: ['Cancún', 'Cozumel'] },
+  { id: 'Cancún', label: t('Cancún, Playa y Cozumel', 'Cancún, Playa and Cozumel'), ciudades: ['Cancún', 'Playa del Carmen', 'Cozumel'] },
 ];
 
 export function Lugares() {
@@ -47,16 +48,16 @@ export function Lugares() {
   const enCiudad = (c: Ciudad | undefined) => !ciudades.length || (c !== undefined && ciudades.includes(c));
   const ciudadDeFecha = (f?: string) => dias.find((d) => d.id === f)?.ciudad;
 
-  const deTipo = (t: TipoLugar) =>
+  const deTipo = (tipo: TipoLugar) =>
     lugares
-      .filter((l) => l.tipo === t && enCiudad(l.ciudad))
+      .filter((l) => l.tipo === tipo && enCiudad(l.ciudad))
       .filter((l) => coincide(q, l.nombre, l.direccion, l.consejo, l.entrada, l.ciudad))
       .sort((a, b) => (a.diaIds[0] ?? '9').localeCompare(b.diaIds[0] ?? '9') || a.nombre.localeCompare(b.nombre));
 
   return (
     <div className="space-y-4">
       {/* Sub-pestañas */}
-      <div role="tablist" aria-label="Tipo de lugar" className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
+      <div role="tablist" aria-label={t('Tipo de lugar', 'Type of place')} className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4">
         {SUBS.map((s) => (
           <button
             key={s.id}
@@ -82,15 +83,15 @@ export function Lugares() {
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Buscar"
-            aria-label="Buscar lugares"
+            placeholder={t('Buscar', 'Search')}
+            aria-label={t('Buscar lugares', 'Search places')}
             className="min-h-12 w-full rounded-full border border-line bg-surface pr-11 pl-10 outline-none focus:border-rosa"
           />
           {q && (
             <button
               type="button"
               onClick={() => setQ('')}
-              aria-label="Borrar búsqueda"
+              aria-label={t('Borrar búsqueda', 'Clear search')}
               className="absolute top-1/2 right-1 grid size-10 -translate-y-1/2 place-items-center rounded-full text-muted"
             >
               <X size={18} aria-hidden="true" />
@@ -143,8 +144,8 @@ export function Lugares() {
               coincide(q, v.aerolinea, v.origen, v.destino, v.notas),
           )}
           tramos={tramos
-            .filter((t) => !ciudades.length || (t.fecha ? enCiudad(ciudadDeFecha(t.fecha)) : ciudades.includes('CDMX')))
-            .filter((t) => coincide(q, t.nombre, t.opciones, t.recomendada))
+            .filter((tr) => !ciudades.length || (tr.fecha ? enCiudad(ciudadDeFecha(tr.fecha)) : ciudades.includes('CDMX')))
+            .filter((tr) => coincide(q, tr.nombre, tr.opciones, tr.recomendada))
             .sort((a, b) => a.orden - b.orden)}
         />
       )}
@@ -153,11 +154,11 @@ export function Lugares() {
 }
 
 function ListaLugares({ lista }: { lista: Lugar[] }) {
-  if (!lista.length) return <p className="card p-5 text-center text-muted">No hay lugares con ese filtro.</p>;
+  if (!lista.length) return <p className="card p-5 text-center text-muted">{t('No hay lugares con ese filtro.', 'No places match this filter.')}</p>;
   return (
     <div className="grid gap-3 lg:grid-cols-2">
       {lista.map((l) => (
-        <LugarCard key={l.id} l={l} extra={l.id === 'l-oxman' ? `Por qué Oxmán: ${RESUMEN.porQueOxman}` : undefined} />
+        <LugarCard key={l.id} l={l} extra={l.id === 'l-oxman' ? `${t('Por qué Oxmán', 'Why Oxmán')}: ${RESUMEN.porQueOxman}` : undefined} />
       ))}
     </div>
   );
@@ -187,8 +188,8 @@ function Destacados() {
   );
   return (
     <section className="card space-y-3 p-4">
-      {bloque('Experiencias gastronómicas', RESUMEN.experienciasGastronomicas)}
-      {bloque('Noches memorables', RESUMEN.nochesMemorables)}
+      {bloque(t('Experiencias gastronómicas', 'Food experiences'), RESUMEN.experienciasGastronomicas)}
+      {bloque(t('Noches memorables', 'Memorable nights'), RESUMEN.nochesMemorables)}
       <ul className="space-y-1 border-t border-line pt-3 text-[15px] leading-snug">
         {RESUMEN.comida.map((c) => (
           <li key={c} className="flex gap-2">

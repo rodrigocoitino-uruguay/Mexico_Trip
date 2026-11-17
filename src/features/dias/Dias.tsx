@@ -5,9 +5,10 @@ import { Chip } from '../../components/ui/Chip';
 import { db } from '../../db/db';
 import { porOrden } from '../../domain/actividades';
 import { alojamientoDeNoche } from '../../domain/alojamiento';
-import { COLOR_CIUDAD } from '../../domain/ciudades';
+import { COLOR_CIUDAD, nombreCiudad } from '../../domain/ciudades';
 import { estadoDia, momentoViaje } from '../../domain/tiempo';
 import type { Dia } from '../../domain/types';
+import { t } from '../../i18n';
 import { cx } from '../../lib/cx';
 import { diaLargo } from '../../lib/fechas';
 import { mapsUrl } from '../../lib/maps';
@@ -71,9 +72,9 @@ function EncabezadoDia({
     <section>
       <p className="flex flex-wrap items-center gap-2 text-[15px] text-muted">
         <span className="capitalize">{diaLargo(dia.fecha)}</span>
-        <span className={cx('rounded-full px-2 text-[12px] font-semibold', COLOR_CIUDAD[dia.ciudad].chip)}>{dia.ciudad}</span>
-        {esHoy && <Chip tono="rosa">Hoy</Chip>}
-        {pasado && <Chip>Ya pasó</Chip>}
+        <span className={cx('rounded-full px-2 text-[12px] font-semibold', COLOR_CIUDAD[dia.ciudad].chip)}>{nombreCiudad(dia.ciudad)}</span>
+        {esHoy && <Chip tono="rosa">{t('Hoy', 'Today')}</Chip>}
+        {pasado && <Chip>{t('Ya pasó', 'Past')}</Chip>}
       </p>
       <h2 className="mt-1 font-display text-[26px] leading-tight font-semibold tracking-tight">{dia.titulo}</h2>
       {dia.resumen && <p className="mt-1 text-muted">{dia.resumen}</p>}
@@ -84,12 +85,12 @@ function EncabezadoDia({
             <div className="flex min-w-0 flex-1 items-center gap-3 rounded-2xl bg-surface px-3 py-2">
               <BedDouble size={20} className="shrink-0 text-rosa" aria-hidden="true" />
               <div className="min-w-0 flex-1 text-[15px] leading-snug">
-                <p className="text-[13px] text-muted">Dormís en</p>
+                <p className="text-[13px] text-muted">{t('Dormís en', 'You sleep at')}</p>
                 {noche ? (
                   <p className="font-semibold">
                     {noche.opcion.nombre}{' '}
                     <span className={cx('text-[13px] font-medium', noche.reservado ? 'text-verde' : 'text-cempa-ink')}>
-                      {noche.reservado ? '· reservado' : '· recomendado, sin reservar'}
+                      {noche.reservado ? t('· reservado', '· booked') : t('· recomendado, sin reservar', '· recommended, not booked')}
                     </span>
                   </p>
                 ) : (
@@ -101,7 +102,7 @@ function EncabezadoDia({
                   href={mapsUrl(noche.opcion.direccion)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={`Abrir ${noche.opcion.nombre} en Maps`}
+                  aria-label={t(`Abrir ${noche.opcion.nombre} en Maps`, `Open ${noche.opcion.nombre} in Maps`)}
                   className="grid size-11 shrink-0 place-items-center rounded-full text-azul active:bg-sunken"
                 >
                   <ExternalLink size={18} aria-hidden="true" />

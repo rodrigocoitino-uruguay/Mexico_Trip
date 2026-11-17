@@ -3,8 +3,11 @@ import { ArrowRightLeft, Check, CircleDashed, ExternalLink, Pencil, SkipForward,
 import { useEffect, useId, useState } from 'react';
 import { borrar, deshacerBorrado, mover, setActiva, setEstado, setGastoReal, setNota } from '../../db/actividades';
 import { db } from '../../db/db';
+import { nombreCiudad } from '../../domain/ciudades';
 import type { Actividad, Dia, EstadoActividad } from '../../domain/types';
+import { t } from '../../i18n';
 import { cx } from '../../lib/cx';
+import { horaVisible } from '../../lib/hora';
 import { diaCorto } from '../../lib/fechas';
 import { ciudadMaps, mapsUrl } from '../../lib/maps';
 import { montoInput, parseMonto } from '../../lib/numeros';
@@ -14,9 +17,9 @@ import { estiloActividad } from './categorias';
 import { ChipsActividad } from './chips';
 
 const ESTADOS: { id: EstadoActividad; label: string; icon: typeof Check }[] = [
-  { id: 'pendiente', label: 'Pendiente', icon: CircleDashed },
-  { id: 'hecho', label: 'Hecha', icon: Check },
-  { id: 'saltado', label: 'Saltada', icon: SkipForward },
+  { id: 'pendiente', label: t('Pendiente', 'Pending'), icon: CircleDashed },
+  { id: 'hecho', label: t('Hecha', 'Done'), icon: Check },
+  { id: 'saltado', label: t('Saltada', 'Skipped'), icon: SkipForward },
 ];
 
 interface Props {
@@ -48,21 +51,21 @@ export function ActividadDetalle({ a, dias, onEditar, onSalir }: Props) {
       : null;
 
   const guardarNota = () => {
-    if ((a.nota ?? '') !== nota.trim()) void setNota(a.id, nota).then(() => toast('Nota guardada'));
+    if ((a.nota ?? '') !== nota.trim()) void setNota(a.id, nota).then(() => toast(t('Nota guardada', 'Note saved')));
   };
   const guardarGasto = () => {
     const n = parseMonto(gasto);
     if (gasto.trim() && n === undefined) {
-      toast('Ese monto no es válido');
+      toast(t('Ese monto no es válido', 'That amount is not valid'));
       return;
     }
-    if (n !== a.gastoRealMXN) void setGastoReal(a.id, n).then(() => toast(n === undefined ? 'Gasto borrado' : 'Gasto guardado'));
+    if (n !== a.gastoRealMXN) void setGastoReal(a.id, n).then(() => toast(n === undefined ? t('Gasto borrado', 'Expense deleted') : t('Gasto guardado', 'Expense saved')));
   };
 
   const onBorrar = async () => {
     const borrada = await borrar(a.id);
     onSalir();
-    if (borrada) toast(`Borraste "${borrada.titulo}"`, { actionLabel: 'Deshacer', onAction: () => void deshacerBorrado(borrada), duration: 6000 });
+    if (borrada) toast(t(`Borraste "${borrada.titulo}"`, `Deleted "${borrada.titulo}"`), { actionLabel: t('Deshacer', 'Undo'), onAction: () => void deshacerBorrado(borrada), duration: 6000 });
   };
 
   const onMover = async (destino: string) => {
@@ -71,8 +74,8 @@ export function ActividadDetalle({ a, dias, onEditar, onSalir }: Props) {
     await mover(a.id, destino);
     onSalir();
     const d = dias.find((x) => x.id === destino);
-    toast(`Pasó al ${d ? diaCorto(d.fecha) : destino}`, {
-      actionLabel: 'Deshacer',
+    toast(t(`Pasó al ${d ? diaCorto(d.fecha) : destino}`, `Moved to ${d ? diaCorto(d.fecha) : destino}`), {
+      actionLabel: t('Deshacer', 'Undo'),
       onAction: () => void mover(a.id, desde),
       duration: 6000,
     });
@@ -87,7 +90,7 @@ export function ActividadDetalle({ a, dias, onEditar, onSalir }: Props) {
         <div className="min-w-0">
           <p className="flex flex-wrap items-center gap-2 text-sm text-muted">
             {dia && <span>{diaCorto(dia.fecha)}</span>}
-            {a.hora && <span className="font-bold text-rosa-ink tabular">{a.hora}</span>}
+            {a.hora && <span className="font-bold text-rosa-ink tabular">{horaVisible(a.hora)}</span>}
             <ChipsActividad a={a} />
           </p>
           <h3 className="mt-0.5 font-display text-[22px] leading-tight font-semibold">{a.titulo}</h3>
@@ -100,13 +103,13 @@ export function ActividadDetalle({ a, dias, onEditar, onSalir }: Props) {
         <dl className="space-y-2 rounded-2xl bg-sunken p-3 text-[15px]">
           {a.comoLlegar && (
             <div>
-              <dt className="text-[13px] font-semibold text-azul">Cómo llegar</dt>
+              <dt className="text-[13px] font-semibold text-azul">{t('Cómo llegar', 'Getting there')}</dt>
               <dd><ConUSD texto={a.comoLlegar} /></dd>
             </div>
           )}
           {a.costoTexto && (
             <div>
-              <dt className="text-[13px] font-semibold text-cempa-ink">Costo</dt>
+              <dt className="text-[13px] font-semibold text-cempa-ink">{t('Costo', 'Cost')}</dt>
               <dd><ConUSD texto={a.costoTexto} /></dd>
             </div>
           )}
@@ -117,19 +120,19 @@ export function ActividadDetalle({ a, dias, onEditar, onSalir }: Props) {
         <dl className="space-y-1 text-[15px]">
           {lugar.direccion && (
             <div className="flex gap-2">
-              <dt className="text-muted">Dirección:</dt>
+              <dt className="text-muted">{t('Dirección', 'Address')}:</dt>
               <dd>{lugar.direccion}</dd>
             </div>
           )}
           {lugar.horario && (
             <div className="flex gap-2">
-              <dt className="shrink-0 text-muted">Horario:</dt>
+              <dt className="shrink-0 text-muted">{t('Horario', 'Hours')}:</dt>
               <dd><ConUSD texto={lugar.horario} /></dd>
             </div>
           )}
           {lugar.consejo && (
             <div className="flex gap-2">
-              <dt className="shrink-0 text-muted">Consejo:</dt>
+              <dt className="shrink-0 text-muted">{t('Consejo', 'Tip')}:</dt>
               <dd><ConUSD texto={lugar.consejo} /></dd>
             </div>
           )}
@@ -143,7 +146,7 @@ export function ActividadDetalle({ a, dias, onEditar, onSalir }: Props) {
           rel="noopener noreferrer"
           className="flex min-h-12 items-center justify-center gap-2 rounded-full border-2 border-azul px-4 font-semibold text-azul active:opacity-70"
         >
-          <ExternalLink size={18} aria-hidden="true" /> Abrir en Maps
+          <ExternalLink size={18} aria-hidden="true" /> {t('Abrir en Maps', 'Open in Maps')}
         </a>
       )}
 
@@ -156,13 +159,13 @@ export function ActividadDetalle({ a, dias, onEditar, onSalir }: Props) {
             a.activa ? 'bg-sunken text-fg' : 'bg-cempa text-black',
           )}
         >
-          {a.activa ? 'Desactivar (volver a opcional)' : 'Activar esta opcional'}
+          {a.activa ? t('Desactivar (volver a opcional)', 'Disable (back to optional)') : t('Activar esta opcional', 'Enable this optional one')}
         </button>
       )}
 
       {/* Estado */}
       <fieldset>
-        <legend className="mb-2 text-sm font-semibold">Estado</legend>
+        <legend className="mb-2 text-sm font-semibold">{t('Estado', 'Status')}</legend>
         <div className="grid grid-cols-3 gap-1 rounded-2xl bg-sunken p-1">
           {ESTADOS.map(({ id, label, icon: I }) => {
             const on = a.estado === id;
@@ -191,13 +194,13 @@ export function ActividadDetalle({ a, dias, onEditar, onSalir }: Props) {
       <div className="space-y-3">
         <div>
           <label htmlFor={idNota} className="mb-1 block text-sm font-semibold">
-            Nota
+            {t('Nota', 'Note')}
           </label>
           <textarea
             id={idNota}
             value={nota}
             rows={3}
-            placeholder="Qué te pareció, qué tener en cuenta…"
+            placeholder={t('Qué te pareció, qué tener en cuenta…', 'What you thought, what to keep in mind…')}
             onChange={(e) => setNotaLocal(e.target.value)}
             onBlur={guardarNota}
             className="w-full rounded-xl border border-line bg-surface px-3 py-2 outline-none focus:border-rosa"
@@ -205,13 +208,13 @@ export function ActividadDetalle({ a, dias, onEditar, onSalir }: Props) {
         </div>
         <div>
           <label htmlFor={idGasto} className="mb-1 block text-sm font-semibold">
-            Gasto real (MXN)
+            {t('Gasto real (MXN)', 'Actual spending (MXN)')}
           </label>
           <input
             id={idGasto}
             inputMode="decimal"
             value={gasto}
-            placeholder={a.costoMXN !== undefined ? `Estimado: ${a.costoMXN}` : '0'}
+            placeholder={a.costoMXN !== undefined ? `${t('Estimado', 'Estimate')}: ${a.costoMXN}` : '0'}
             onChange={(e) => setGastoLocal(e.target.value)}
             onBlur={guardarGasto}
             onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
@@ -227,12 +230,12 @@ export function ActividadDetalle({ a, dias, onEditar, onSalir }: Props) {
           onClick={onEditar}
           className="flex min-h-12 w-full items-center gap-3 rounded-xl px-2 font-medium active:bg-sunken"
         >
-          <Pencil size={18} className="text-rosa-ink" aria-hidden="true" /> Editar hora y textos
+          <Pencil size={18} className="text-rosa-ink" aria-hidden="true" /> {t('Editar hora y textos', 'Edit time and text')}
         </button>
         <div className="flex min-h-12 items-center gap-3 rounded-xl px-2">
           <ArrowRightLeft size={18} className="shrink-0 text-rosa-ink" aria-hidden="true" />
           <label htmlFor={idMover} className="shrink-0 font-medium">
-            Mover a
+            {t('Mover a', 'Move to')}
           </label>
           <select
             id={idMover}
@@ -240,12 +243,12 @@ export function ActividadDetalle({ a, dias, onEditar, onSalir }: Props) {
             onChange={(e) => void onMover(e.target.value)}
             className="min-h-11 min-w-0 flex-1 rounded-xl border border-line bg-surface px-2"
           >
-            <option value="">Elegí un día…</option>
+            <option value="">{t('Elegí un día…', 'Pick a day…')}</option>
             {dias
               .filter((d) => d.id !== a.diaId)
               .map((d) => (
                 <option key={d.id} value={d.id}>
-                  {diaCorto(d.fecha)} · {d.ciudad}
+                  {diaCorto(d.fecha)} · {nombreCiudad(d.ciudad)}
                 </option>
               ))}
           </select>
@@ -255,7 +258,7 @@ export function ActividadDetalle({ a, dias, onEditar, onSalir }: Props) {
           onClick={() => void onBorrar()}
           className="flex min-h-12 w-full items-center gap-3 rounded-xl px-2 font-medium text-rojo active:bg-rojo-soft"
         >
-          <Trash2 size={18} aria-hidden="true" /> Borrar actividad
+          <Trash2 size={18} aria-hidden="true" /> {t('Borrar actividad', 'Delete activity')}
         </button>
       </div>
     </div>

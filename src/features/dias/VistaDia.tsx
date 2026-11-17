@@ -5,6 +5,7 @@ import { agregar, editar } from '../../db/actividades';
 import { actividadEnCurso, proximaActividad, textoEnMinutos } from '../../domain/hoy';
 import { estadoDia } from '../../domain/tiempo';
 import type { Actividad, Dia } from '../../domain/types';
+import { t } from '../../i18n';
 import { diaLargo } from '../../lib/fechas';
 import { useEsDesktop } from '../../lib/media';
 import { toast } from '../../store/toast';
@@ -65,7 +66,9 @@ export function VistaDia({ dia, dias, lista, now, arriba, ocultarAnteriores = fa
               onClick={() => setVerAnteriores((v) => !v)}
               className="mt-3 min-h-11 w-full rounded-full text-[15px] font-semibold text-muted active:bg-sunken"
             >
-              {verAnteriores ? 'Esconder las anteriores' : `Ver ${corte} ${corte === 1 ? 'anterior' : 'anteriores'}`}
+              {verAnteriores
+                ? t('Esconder las anteriores', 'Hide earlier ones')
+                : t(`Ver ${corte} ${corte === 1 ? 'anterior' : 'anteriores'}`, `Show ${corte} earlier`)}
             </button>
           )}
           <div className="mt-4">
@@ -84,7 +87,7 @@ export function VistaDia({ dia, dias, lista, now, arriba, ocultarAnteriores = fa
             onClick={() => setForm({ modo: 'agregar' })}
             className="mt-3 flex min-h-12 w-full items-center justify-center gap-2 rounded-[16px] border-2 border-dashed border-line font-semibold text-rosa-ink active:bg-sunken"
           >
-            <Plus size={18} aria-hidden="true" /> Agregar actividad
+            <Plus size={18} aria-hidden="true" /> {t('Agregar actividad', 'Add activity')}
           </button>
 
           <PieDia
@@ -99,12 +102,12 @@ export function VistaDia({ dia, dias, lista, now, arriba, ocultarAnteriores = fa
         {esDesktop && (
           <aside
             className="scroll-area sticky top-2 hidden max-h-[calc(100dvh-140px)] lg:block"
-            aria-label="Detalle de la actividad"
+            aria-label={t('Detalle de la actividad', 'Activity details')}
           >
             {detalle ? (
               <div className="card p-5">{detalle}</div>
             ) : (
-              <p className="card p-5 text-muted">Elegí una actividad para ver el detalle, anotar o cargar un gasto.</p>
+              <p className="card p-5 text-muted">{t('Elegí una actividad para ver el detalle, anotar o cargar un gasto.', 'Pick an activity to see details, take notes or log an expense.')}</p>
             )}
           </aside>
         )}
@@ -114,7 +117,7 @@ export function VistaDia({ dia, dias, lista, now, arriba, ocultarAnteriores = fa
         <Sheet
           open={!!seleccionada && !form}
           onClose={() => setActId(null)}
-          title={seleccionada?.titulo ?? 'Actividad'}
+          title={seleccionada?.titulo ?? t('Actividad', 'Activity')}
           header={<span />}
         >
           {detalle}
@@ -124,7 +127,7 @@ export function VistaDia({ dia, dias, lista, now, arriba, ocultarAnteriores = fa
       <Sheet
         open={!!form}
         onClose={() => setForm(null)}
-        title={form?.modo === 'agregar' ? `Nueva actividad · ${diaLargo(dia.fecha)}` : 'Editar actividad'}
+        title={form?.modo === 'agregar' ? `${t('Nueva actividad', 'New activity')} · ${diaLargo(dia.fecha)}` : t('Editar actividad', 'Edit activity')}
       >
         {form && (
           <ActividadForm
@@ -134,11 +137,11 @@ export function VistaDia({ dia, dias, lista, now, arriba, ocultarAnteriores = fa
             onGuardar={async (datos) => {
               if (form.modo === 'editar') {
                 await editar(form.id, datos);
-                toast('Cambios guardados');
+                toast(t('Cambios guardados', 'Changes saved'));
               } else {
                 const nueva = await agregar(dia.id, datos);
                 setActId(esDesktop ? nueva.id : null);
-                toast('Actividad agregada');
+                toast(t('Actividad agregada', 'Activity added'));
               }
               setForm(null);
             }}

@@ -1,5 +1,7 @@
-const fmt0 = new Intl.NumberFormat('es-UY', { maximumFractionDigits: 0 });
-const fmt2 = new Intl.NumberFormat('es-UY', { maximumFractionDigits: 2 });
+import { EN, LOCALE } from '../i18n';
+
+const fmt0 = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 0 });
+const fmt2 = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 2 });
 
 /** 'MXN 1.267' */
 export function mxn(n: number): string {
@@ -22,7 +24,7 @@ export function parseMonto(texto: string): number | undefined {
     t = coma > punto ? t.replace(/\./g, '').replace(',', '.') : t.replace(/,/g, '');
   } else if (coma > -1) {
     t = t.replace(',', '.');
-  } else if (punto > -1 && /^\d{1,3}(\.\d{3})+$/.test(t)) {
+  } else if (!EN && punto > -1 && /^\d{1,3}(\.\d{3})+$/.test(t)) {
     t = t.replace(/\./g, ''); // '1.250' = mil doscientos cincuenta
   }
   const n = Number(t);
@@ -31,5 +33,5 @@ export function parseMonto(texto: string): number | undefined {
 
 /** Monto para mostrar en un campo editable. */
 export function montoInput(n: number | undefined): string {
-  return n === undefined ? '' : fmt2.format(n).replace(/\./g, '');
+  return n === undefined ? '' : fmt2.format(n).replace(EN ? /,/g : /\./g, '');
 }

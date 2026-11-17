@@ -6,14 +6,6 @@ type P = Omit<Pendiente, 'updatedAt' | 'delSeed' | 'orden' | 'hecho'>;
 const pendientes: P[] = [
   // Reservar ya
   {
-    id: 'p-empresa',
-    grupo: 'Reservar ya',
-    titulo: 'Confirmar con la empresa qué cubre',
-    detalle:
-      'Qué noches cubre (del 23 al 26/2 o hasta el 27/2), si paga el traslado Cancún → Cozumel y si el retreat incluye seguro.',
-    fechaLimite: '2026-12-15',
-  },
-  {
     id: 'p-vuelo-merida',
     grupo: 'Reservar ya',
     titulo: 'Comprar el vuelo CDMX (MEX) → Mérida',
@@ -78,7 +70,7 @@ const pendientes: P[] = [
   {
     id: 'p-finde-cancun',
     grupo: 'Más adelante',
-    titulo: 'Verificar o ajustar la partida del finde en Cancún',
+    titulo: 'Verificar o ajustar la partida del finde (Cancún y Playa del Carmen)',
     detalle: 'USD 175, estimado sin verificar.',
   },
   // En destino

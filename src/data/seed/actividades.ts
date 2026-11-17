@@ -751,8 +751,8 @@ export const SEED_ACTIVIDADES: Actividad[] = [
     {
       hora: '',
       categoria: 'descanso',
-      titulo: 'Cancún con el equipo',
-      descripcion: 'Fin de semana con el equipo. Sin plan detallado.',
+      titulo: 'Playa del Carmen con el equipo',
+      descripcion: 'Fin de semana con el equipo en Playa del Carmen (a confirmar con los amigos). Sin plan detallado.',
       costoTexto: 'Finde: USD 175 por 3 noches (estimado sin verificar)',
       fiabilidad: 'sin_verificar',
     },
@@ -761,8 +761,8 @@ export const SEED_ACTIVIDADES: Actividad[] = [
     {
       hora: '',
       categoria: 'descanso',
-      titulo: 'Cancún con el equipo',
-      descripcion: 'Fin de semana con el equipo. Sin plan detallado.',
+      titulo: 'Playa del Carmen con el equipo',
+      descripcion: 'Fin de semana con el equipo en Playa del Carmen (a confirmar con los amigos). Sin plan detallado.',
       costoTexto: 'Finde: USD 175 por 3 noches (estimado sin verificar)',
       fiabilidad: 'sin_verificar',
     },
@@ -775,7 +775,7 @@ export const SEED_ACTIVIDADES: Actividad[] = [
       categoria: 'traslado',
       titulo: 'Traslado Cancún → Cozumel',
       descripcion:
-        'Pendiente confirmar si la empresa paga el traslado. En febrero hay "nortes" y el ferry puede cancelarse por viento.',
+        'Lo paga la empresa. En febrero hay "nortes" y el ferry puede cancelarse por viento.',
       fiabilidad: 'sin_verificar',
     },
     {
@@ -806,8 +806,8 @@ export const SEED_ACTIVIDADES: Actividad[] = [
       hora: '',
       categoria: 'descanso',
       titulo: 'Noche en Cancún',
-      descripcion: 'Termina el retreat. Esta noche la pagás vos solo si la empresa no la cubre.',
-      costoTexto: 'USD 55, solo si la empresa no la cubre',
+      descripcion: 'Termina el retreat. Esta noche la pagás vos: la empresa no la cubre.',
+      costoTexto: 'USD 55',
     },
   ]),
   ...dia('2027-02-27', [

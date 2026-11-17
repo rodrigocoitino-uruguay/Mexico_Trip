@@ -8,6 +8,7 @@ import { Dias } from '../features/dias/Dias';
 import { Hoy } from '../features/hoy/Hoy';
 import { Lugares } from '../features/lugares/Lugares';
 import { Reservas } from '../features/reservas/Reservas';
+import { LOCALE, t } from '../i18n';
 import { fechaSimulada } from '../lib/reloj';
 import { requestPersistentStorage, useVisualViewportVars } from '../lib/viewport';
 import { Mas } from '../features/mas/Mas';
@@ -57,7 +58,7 @@ export function App() {
       .catch((e: unknown) => setError(e instanceof Error ? e.message : String(e)));
   }, []);
 
-  const titulo = TABS.find((t) => t.id === tab)?.label ?? '';
+  const titulo = TABS.find((x) => x.id === tab)?.label ?? '';
 
   return (
     <div className="flex h-full">
@@ -73,7 +74,7 @@ export function App() {
         <main className="scroll-area min-h-0 flex-1">
           <div className="mx-auto max-w-5xl px-4 pt-2 pb-8">
             {error ? (
-              <p className="card p-4 text-rojo">No se pudieron cargar los datos: {error}</p>
+              <p className="card p-4 text-rojo">{t('No se pudieron cargar los datos', 'Could not load the data')}: {error}</p>
             ) : listo ? (
               <Pantalla />
             ) : null}
@@ -91,7 +92,7 @@ export function App() {
 function BannerSimulacion() {
   const d = fechaSimulada();
   if (!d) return null;
-  const txt = new Intl.DateTimeFormat('es-UY', {
+  const txt = new Intl.DateTimeFormat(LOCALE, {
     weekday: 'short',
     day: 'numeric',
     month: 'numeric',
@@ -104,7 +105,7 @@ function BannerSimulacion() {
       href={location.pathname}
       className="block bg-cempa px-4 py-1.5 text-center text-[14px] font-semibold text-black"
     >
-      Simulando {txt} (hora de CDMX) · tocá para salir
+      {t('Simulando', 'Simulating')} {txt} ({t('hora de CDMX', 'Mexico City time')}) · {t('tocá para salir', 'tap to exit')}
     </a>
   );
 }

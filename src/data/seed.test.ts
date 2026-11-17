@@ -191,9 +191,9 @@ describe('seed: lugares', () => {
 });
 
 describe('seed: reservas, info y plan B', () => {
-  it('pendientes por grupo (4 / 7 / 3), todos sin hacer', () => {
+  it('pendientes por grupo (3 / 7 / 3), todos sin hacer', () => {
     const g = (x: string) => pendientes.filter((p) => p.grupo === x).length;
-    expect([g('Reservar ya'), g('Más adelante'), g('En destino')]).toEqual([4, 7, 3]);
+    expect([g('Reservar ya'), g('Más adelante'), g('En destino')]).toEqual([3, 7, 3]);
     expect(pendientes.every((p) => !p.hecho)).toBe(true);
     expect(pendientes.find((p) => p.id === 'p-vuelo-merida')?.fechaLimite).toBe('2026-12-15');
   });
@@ -235,7 +235,6 @@ describe('seed: presupuesto', () => {
     expect(p.despues.reduce((s, e) => s + e.usd, 0)).toBe(p.subtotalDespuesUSD);
     for (const k of ['bajo', 'central', 'alto'] as const) {
       expect(p.totalSemana[k] + p.subtotalDespuesUSD).toBe(p.totalViaje[k]);
-      expect(p.totalViaje[k] - 55).toBe(p.totalViajeSinNoche26[k]);
     }
     expect(p.topeUSD).toBe(1000);
     expect(p.tipoCambioDefault).toBe(18.7);

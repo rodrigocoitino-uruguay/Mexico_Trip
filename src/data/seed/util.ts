@@ -5,7 +5,15 @@ export const SEED_TS = '2026-11-10T00:00:00.000Z';
  * Versión del contenido del seed. Subila cada vez que corrijas un dato:
  * la app agrega lo nuevo y actualiza lo que no editaste, sin tocar tus cambios.
  */
-export const SEED_VERSION = 2;
+export const SEED_VERSION = 3;
+
+/**
+ * Registros que existieron en versiones anteriores del seed y ya no van (por tabla).
+ * Al actualizar se borran del dispositivo, salvo que los hayas editado vos.
+ */
+export const SEED_RETIRADOS: Partial<Record<string, readonly string[]>> = {
+  pendientes: ['p-empresa'],
+};
 
 export function base(id: string) {
   return { id, updatedAt: SEED_TS, delSeed: true as const };

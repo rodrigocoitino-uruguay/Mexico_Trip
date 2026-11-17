@@ -6,6 +6,7 @@ import { NOTA_PRECIOS_ALOJAMIENTO } from '../../data/seed';
 import { cancelarReserva, editarReserva, reservar } from '../../db/reservas';
 import { opcionesVisibles } from '../../domain/reservas';
 import type { CiudadAlojamiento, OpcionAlojamiento } from '../../domain/types';
+import { t } from '../../i18n';
 import { cx } from '../../lib/cx';
 import { mapsUrl } from '../../lib/maps';
 import { toast } from '../../store/toast';
@@ -32,7 +33,7 @@ export function Alojamiento({ opciones, ciudades }: { opciones: OpcionAlojamient
       <Sheet
         open={!!form}
         onClose={() => setForm(null)}
-        title={form?.editar ? `Reserva · ${form.op.nombre}` : `Reservé ${form?.op.nombre ?? ''}`}
+        title={form?.editar ? `${t('Reserva', 'Booking')} · ${form.op.nombre}` : t(`Reservé ${form?.op.nombre ?? ''}`, `Booked ${form?.op.nombre ?? ''}`)}
       >
         {form && (
           <ReservaForm
@@ -42,18 +43,18 @@ export function Alojamiento({ opciones, ciudades }: { opciones: OpcionAlojamient
             monedaDefault="USD"
             checkInDefault={form.op.desde}
             checkOutDefault={masUno(form.op.hasta)}
-            textoGuardar={form.editar ? 'Guardar' : 'Confirmar reserva'}
+            textoGuardar={form.editar ? t('Guardar', 'Save') : t('Confirmar reserva', 'Confirm booking')}
             onCancelar={() => setForm(null)}
             onGuardar={async (r) => {
               if (form.editar) {
                 await editarReserva(form.op.id, r);
-                toast('Reserva actualizada');
+                toast(t('Reserva actualizada', 'Booking updated'));
               } else {
                 const auto = await reservar(form.op.id, r);
                 toast(
                   auto.length
-                    ? `Reservado. También marqué como hecho: ${auto.join(', ')}`
-                    : 'Reservado. Las otras opciones quedan en “Ver descartadas”',
+                    ? t(`Reservado. También marqué como hecho: ${auto.join(', ')}`, `Booked. I also marked as done: ${auto.join(', ')}`)
+                    : t('Reservado. Las otras opciones quedan en “Ver descartadas”', 'Booked. The other options are under “Show discarded”'),
                   { duration: 5000 },
                 );
               }
@@ -100,7 +101,7 @@ function Ciudad({
             className="flex min-h-11 items-center gap-1 rounded-full px-2 text-[15px] font-semibold text-muted active:bg-sunken"
           >
             <ChevronDown size={18} className={cx('transition-transform', verDescartadas && 'rotate-180')} aria-hidden="true" />
-            {verDescartadas ? 'Esconder' : 'Ver'} opciones descartadas ({descartadas.length})
+            {verDescartadas ? t('Esconder', 'Hide') : t('Ver', 'Show')} {t('opciones descartadas', 'discarded options')} ({descartadas.length})
           </button>
           {verDescartadas && (
             <div className="mt-2 animate-rise space-y-3 opacity-80">
@@ -111,11 +112,11 @@ function Ciudad({
                 <button
                   type="button"
                   onClick={() =>
-                    void cancelarReserva(ciudad).then(() => toast(`Reserva de ${ciudad} cancelada: vuelven las 3 opciones`))
+                    void cancelarReserva(ciudad).then(() => toast(t(`Reserva de ${ciudad} cancelada: vuelven las 3 opciones`, `Booking in ${ciudad} canceled: the 3 options are back`)))
                   }
                   className="min-h-11 w-full rounded-full border-2 border-rojo font-semibold text-rojo active:bg-rojo-soft"
                 >
-                  Cancelar la reserva y volver a las opciones
+                  {t('Cancelar la reserva y volver a las opciones', 'Cancel the booking and go back to the options')}
                 </button>
               )}
             </div>
@@ -133,10 +134,10 @@ function OpcionCard({ o, onReservar }: { o: OpcionAlojamiento; onReservar: () =>
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <p className="flex flex-wrap gap-1.5">
-            {reservado && <Chip tono="verde">reservado</Chip>}
+            {reservado && <Chip tono="verde">{t('reservado', 'booked')}</Chip>}
             {!reservado && o.recomendado && (
               <Chip tono="rosa">
-                <Star size={12} aria-hidden="true" /> recomendado
+                <Star size={12} aria-hidden="true" /> {t('recomendado', 'recommended')}
               </Chip>
             )}
           </p>
@@ -147,7 +148,7 @@ function OpcionCard({ o, onReservar }: { o: OpcionAlojamiento; onReservar: () =>
           href={mapsUrl(o.direccion)}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`Abrir ${o.nombre} en Maps`}
+          aria-label={t(`Abrir ${o.nombre} en Maps`, `Open ${o.nombre} in Maps`)}
           className="grid size-11 shrink-0 place-items-center rounded-full bg-azul-soft text-azul active:opacity-70"
         >
           <ExternalLink size={18} aria-hidden="true" />
@@ -159,17 +160,17 @@ function OpcionCard({ o, onReservar }: { o: OpcionAlojamiento; onReservar: () =>
       {!reservado && (
         <dl className="mt-2 grid grid-cols-2 gap-2 text-[15px]">
           <div className="rounded-xl bg-sunken p-2">
-            <dt className="text-[13px] text-muted">Dormitorio / noche</dt>
+            <dt className="text-[13px] text-muted">{t('Dormitorio / noche', 'Dorm / night')}</dt>
             <dd className="font-semibold">{o.precioDorm}</dd>
           </div>
           <div className="rounded-xl bg-sunken p-2">
-            <dt className="text-[13px] text-muted">Puntaje</dt>
+            <dt className="text-[13px] text-muted">{t('Puntaje', 'Rating')}</dt>
             <dd className="font-semibold">{o.puntaje}</dd>
           </div>
         </dl>
       )}
       <p className="mt-2 text-[15px] leading-snug">{o.notas}</p>
-      {!reservado && <p className="mt-1 text-[14px] text-muted">Privada: {o.precioPrivada}</p>}
+      {!reservado && <p className="mt-1 text-[14px] text-muted">{t('Privada', 'Private room')}: {o.precioPrivada}</p>}
 
       <button
         type="button"
@@ -179,7 +180,7 @@ function OpcionCard({ o, onReservar }: { o: OpcionAlojamiento; onReservar: () =>
           reservado ? 'bg-sunken text-fg' : 'bg-verde text-white',
         )}
       >
-        {reservado ? 'Editar datos de la reserva' : 'Reservé esta'}
+        {reservado ? t('Editar datos de la reserva', 'Edit booking details') : t('Reservé esta', 'I booked this one')}
       </button>
     </article>
   );

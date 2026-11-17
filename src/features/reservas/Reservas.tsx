@@ -10,11 +10,16 @@ import { reabrirDecision, resolverDecision } from '../../db/reservas';
 import { urgencia } from '../../domain/hoy';
 import { fechaEnZona } from '../../domain/tiempo';
 import type { Decision, GrupoPendiente, Pendiente } from '../../domain/types';
+import { t } from '../../i18n';
 import { cx } from '../../lib/cx';
 import { diaMes } from '../../lib/fechas';
 import { useAhora } from '../../lib/reloj';
 
 const GRUPOS: GrupoPendiente[] = ['Reservar ya', 'Más adelante', 'En destino'];
+
+/** Los grupos se guardan en español (son una clave de datos); acá se traducen para mostrarlos. */
+const nombreGrupo = (g: GrupoPendiente) =>
+  g === 'Reservar ya' ? t('Reservar ya', 'Book now') : g === 'Más adelante' ? t('Más adelante', 'Later') : t('En destino', 'On the trip');
 
 /** '15/12/26' o '29/1' (las del 2027 sin año). */
 function fechaCorta(iso: string): string {
@@ -36,17 +41,17 @@ export function Reservas() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-5">
-      <section className="card p-4" aria-label="Progreso">
+      <section className="card p-4" aria-label={t('Progreso', 'Progress')}>
         <p className="flex items-baseline justify-between">
           <span className="font-semibold">
-            {hechos} de {pendientes.length} hechas
+            {t(`${hechos} de ${pendientes.length} hechas`, `${hechos} of ${pendientes.length} done`)}
           </span>
           <span className="text-muted tabular">{pct}%</span>
         </p>
         <div
           className="mt-2 h-2.5 overflow-hidden rounded-full bg-sunken"
           role="progressbar"
-          aria-label="Reservas hechas"
+          aria-label={t('Reservas hechas', 'Bookings done')}
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={pct}
@@ -58,7 +63,7 @@ export function Reservas() {
       {abiertas.length > 0 && (
         <section aria-labelledby="decisiones" className="space-y-2">
           <h2 id="decisiones" className="font-display text-xl font-semibold">
-            Decisiones abiertas
+            {t('Decisiones abiertas', 'Open decisions')}
           </h2>
           {abiertas.map((d) => (
             <DecisionCard key={d.id} d={d} />
@@ -74,7 +79,7 @@ export function Reservas() {
         return (
           <section key={g} aria-labelledby={`g-${g}`}>
             <h2 id={`g-${g}`} className="flex items-baseline justify-between font-display text-xl font-semibold">
-              {g}
+              {nombreGrupo(g)}
               <span className="font-sans text-[14px] font-normal text-muted tabular">
                 {hechosG}/{lista.length}
               </span>
@@ -89,7 +94,7 @@ export function Reservas() {
                   onClick={() => setNueva(g)}
                   className="flex min-h-12 w-full items-center gap-2 px-4 font-semibold text-rosa-ink active:bg-sunken"
                 >
-                  <Plus size={18} aria-hidden="true" /> Agregar tarea
+                  <Plus size={18} aria-hidden="true" /> {t('Agregar tarea', 'Add task')}
                 </button>
               </li>
             </ul>
@@ -97,14 +102,14 @@ export function Reservas() {
         );
       })}
 
-      <Sheet open={!!nueva} onClose={() => setNueva(null)} title="Nueva tarea">
+      <Sheet open={!!nueva} onClose={() => setNueva(null)} title={t('Nueva tarea', 'New task')}>
         {nueva && <NuevaTarea key={nueva} grupo={nueva} onListo={() => setNueva(null)} />}
       </Sheet>
 
       {resueltas.length > 0 && (
         <section aria-labelledby="resueltas" className="space-y-2">
           <h2 id="resueltas" className="font-display text-xl font-semibold text-muted">
-            Decisiones tomadas
+            {t('Decisiones tomadas', 'Decisions made')}
           </h2>
           {resueltas.map((d) => (
             <DecisionCard key={d.id} d={d} />
@@ -129,7 +134,7 @@ function PendienteItem({ p, hoy }: { p: Pendiente; hoy: string }) {
         type="button"
         role="checkbox"
         aria-checked={p.hecho}
-        aria-label={`Hecho: ${p.titulo}`}
+        aria-label={`${t('Hecho', 'Done')}: ${p.titulo}`}
         onClick={() => void setHecho(p.id, !p.hecho)}
         className="grid size-11 shrink-0 place-items-center rounded-full active:bg-sunken"
       >
@@ -151,7 +156,7 @@ function PendienteItem({ p, hoy }: { p: Pendiente; hoy: string }) {
               u === 'vencida' ? 'text-rojo' : u === 'pronto' ? 'text-cempa-ink' : 'text-muted',
             )}
           >
-            {u === 'vencida' ? 'Venció el ' : 'Antes del '}
+            {u === 'vencida' ? t('Venció el ', 'Overdue since ') : t('Antes del ', 'Before ')}
             {fechaCorta(p.fechaLimite)}
           </p>
         )}
@@ -160,10 +165,10 @@ function PendienteItem({ p, hoy }: { p: Pendiente; hoy: string }) {
       {!p.delSeed && (
         <button
           type="button"
-          aria-label={`Borrar tarea: ${p.titulo}`}
+          aria-label={`${t('Borrar tarea', 'Delete task')}: ${p.titulo}`}
           onClick={() =>
             void borrarPendiente(p.id).then((b) =>
-              b && toast('Tarea borrada', { actionLabel: 'Deshacer', onAction: () => void deshacerBorradoPendiente(b), duration: 6000 }),
+              b && toast(t('Tarea borrada', 'Task deleted'), { actionLabel: t('Deshacer', 'Undo'), onAction: () => void deshacerBorradoPendiente(b), duration: 6000 }),
             )
           }
           className="grid size-11 shrink-0 place-items-center self-center rounded-full text-muted active:bg-rojo-soft active:text-rojo"
@@ -187,7 +192,7 @@ function DecisionCard({ d }: { d: Decision }) {
           <p className="mt-0.5 text-[15px] text-muted">{d.detalle}</p>
           {d.resuelta && (
             <p className="mt-2 flex flex-wrap items-center gap-2">
-              <Chip tono="verde">decidido</Chip>
+              <Chip tono="verde">{t('decidido', 'decided')}</Chip>
               {d.resolucion && <span className="font-medium">{d.resolucion}</span>}
             </p>
           )}
@@ -199,7 +204,7 @@ function DecisionCard({ d }: { d: Decision }) {
           onClick={() => void reabrirDecision(d.id)}
           className="mt-2 min-h-11 rounded-full px-3 font-semibold text-muted active:bg-sunken"
         >
-          Reabrir
+          {t('Reabrir', 'Reopen')}
         </button>
       ) : abierta ? (
         <form
@@ -210,21 +215,21 @@ function DecisionCard({ d }: { d: Decision }) {
           }}
         >
           <label htmlFor={`dec-${d.id}`} className="block text-sm font-semibold">
-            ¿Qué decidiste?
+            {t('¿Qué decidiste?', 'What did you decide?')}
           </label>
           <input
             id={`dec-${d.id}`}
             value={texto}
             onChange={(e) => setTexto(e.target.value)}
-            placeholder="Por ejemplo: BSE Viajeros, USD 62"
+            placeholder={t('Por ejemplo: BSE Viajeros, USD 62', 'For example: BSE Viajeros, USD 62')}
             className="min-h-12 w-full rounded-xl border border-line bg-surface px-3 outline-none focus:border-rosa"
           />
           <div className="flex gap-2">
             <button type="button" onClick={() => setAbierta(false)} className="min-h-11 flex-1 rounded-full bg-sunken font-semibold">
-              Cancelar
+              {t('Cancelar', 'Cancel')}
             </button>
             <button type="submit" className="min-h-11 flex-1 rounded-full bg-verde font-semibold text-white">
-              Listo
+              {t('Listo', 'Done')}
             </button>
           </div>
         </form>
@@ -234,7 +239,7 @@ function DecisionCard({ d }: { d: Decision }) {
           onClick={() => setAbierta(true)}
           className="mt-3 min-h-11 w-full rounded-full bg-cempa-soft font-semibold text-cempa-ink active:opacity-70"
         >
-          Resolver
+          {t('Resolver', 'Resolve')}
         </button>
       )}
     </article>
@@ -254,19 +259,19 @@ function NuevaTarea({ grupo: inicial, onListo }: { grupo: GrupoPendiente; onList
         e.preventDefault();
         if (!titulo.trim()) return;
         void agregarPendiente({ titulo, grupo, fechaLimite: fecha, detalle }).then(() => {
-          toast('Tarea agregada');
+          toast(t('Tarea agregada', 'Task added'));
           onListo();
         });
       }}
     >
       <div>
         <label htmlFor="nt-titulo" className="mb-1 block text-sm font-semibold">
-          Qué hay que hacer
+          {t('Qué hay que hacer', 'What needs doing')}
         </label>
         <input id="nt-titulo" value={titulo} onChange={(e) => setTitulo(e.target.value)} className={campo} />
       </div>
       <fieldset>
-        <legend className="mb-1 text-sm font-semibold">Cuándo</legend>
+        <legend className="mb-1 text-sm font-semibold">{t('Cuándo', 'When')}</legend>
         <div className="grid grid-cols-3 gap-1 rounded-2xl bg-sunken p-1">
           {GRUPOS.map((g) => (
             <button
@@ -276,20 +281,20 @@ function NuevaTarea({ grupo: inicial, onListo }: { grupo: GrupoPendiente; onList
               onClick={() => setGrupo(g)}
               className={cx('min-h-11 rounded-xl text-[14px] font-medium', grupo === g ? 'bg-surface shadow-sm' : 'text-muted')}
             >
-              {g}
+              {nombreGrupo(g)}
             </button>
           ))}
         </div>
       </fieldset>
       <div>
         <label htmlFor="nt-fecha" className="mb-1 block text-sm font-semibold">
-          Fecha límite (opcional)
+          {t('Fecha límite (opcional)', 'Deadline (optional)')}
         </label>
         <input id="nt-fecha" type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} className={campo} />
       </div>
       <div>
         <label htmlFor="nt-detalle" className="mb-1 block text-sm font-semibold">
-          Detalle (opcional)
+          {t('Detalle (opcional)', 'Details (optional)')}
         </label>
         <input id="nt-detalle" value={detalle} onChange={(e) => setDetalle(e.target.value)} className={campo} />
       </div>
@@ -298,7 +303,7 @@ function NuevaTarea({ grupo: inicial, onListo }: { grupo: GrupoPendiente; onList
         disabled={!titulo.trim()}
         className="min-h-12 w-full rounded-full bg-rosa-ink font-semibold text-white active:opacity-80 disabled:opacity-40"
       >
-        Agregar
+        {t('Agregar', 'Add')}
       </button>
     </form>
   );

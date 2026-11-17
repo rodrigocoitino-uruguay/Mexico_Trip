@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { SEED } from '../data/seed';
-import { planSeedSync } from '../domain/seedSync';
+import { planRetiros, planSeedSync } from '../domain/seedSync';
 import type { Actividad } from '../domain/types';
 import { createDB, type ViajeDB } from './db';
 import { aplicarSeed, marcarBorradoSeed, restaurarSeed } from './seed';
@@ -33,6 +33,26 @@ describe('aplicarSeed', () => {
     expect((await db.actividades.get('2027-02-13-02'))?.estado).toBe('pendiente');
     expect(await db.actividades.get('2027-02-13-03')).toBeDefined();
     expect(await db.gastos.count()).toBe(0);
+  });
+});
+
+describe('planRetiros (borrar lo que el seed ya no tiene)', () => {
+  const fila = (id: string, extra: object = {}) => ({ id, updatedAt: '', delSeed: true as const, ...extra });
+
+  it('borra lo retirado que no editaste y deja lo demás', () => {
+    const existentes = new Map([
+      ['a', fila('a')],
+      ['b', fila('b', { editadoPorUsuario: true })],
+      ['c', { id: 'c', updatedAt: '' }],
+    ]);
+    expect(planRetiros(['a', 'b', 'c', 'z'], existentes)).toEqual(['a']);
+    expect(planRetiros(undefined, existentes)).toEqual([]);
+  });
+
+  it('al actualizar elimina la tarea retirada del dispositivo', async () => {
+    await db.pendientes.add({ ...fila('p-empresa'), orden: 1, grupo: 'Reservar ya', titulo: 'viejo', hecho: false });
+    await aplicarSeed(db);
+    expect(await db.pendientes.get('p-empresa')).toBeUndefined();
   });
 });
 

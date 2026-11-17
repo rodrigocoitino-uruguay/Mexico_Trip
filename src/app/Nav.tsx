@@ -1,13 +1,14 @@
 import { CalendarDays, ClipboardCheck, Ellipsis, MapPin, Sun, type LucideIcon } from 'lucide-react';
+import { cambiarIdioma, LANG, t } from '../i18n';
 import { cx } from '../lib/cx';
 import { useUI, type Tab } from '../store/ui';
 
 export const TABS: { id: Tab; label: string; icon: LucideIcon }[] = [
-  { id: 'hoy', label: 'Hoy', icon: Sun },
-  { id: 'dias', label: 'Días', icon: CalendarDays },
-  { id: 'lugares', label: 'Lugares', icon: MapPin },
-  { id: 'reservas', label: 'Reservas', icon: ClipboardCheck },
-  { id: 'mas', label: 'Más', icon: Ellipsis },
+  { id: 'hoy', label: t('Hoy', 'Today'), icon: Sun },
+  { id: 'dias', label: t('Días', 'Days'), icon: CalendarDays },
+  { id: 'lugares', label: t('Lugares', 'Places'), icon: MapPin },
+  { id: 'reservas', label: t('Reservas', 'Bookings'), icon: ClipboardCheck },
+  { id: 'mas', label: t('Más', 'More'), icon: Ellipsis },
 ];
 
 /** Barra inferior (celular). */
@@ -16,7 +17,7 @@ export function TabBar() {
   const setTab = useUI((s) => s.setTab);
   return (
     <nav
-      aria-label="Secciones"
+      aria-label={t('Secciones', 'Sections')}
       className="shrink-0 border-t border-line bg-surface/95 backdrop-blur-xl lg:hidden"
       style={{ paddingBottom: 'var(--safe-bottom)' }}
     >
@@ -49,8 +50,8 @@ export function SideNav() {
   const tab = useUI((s) => s.tab);
   const setTab = useUI((s) => s.setTab);
   return (
-    <nav aria-label="Secciones" className="hidden w-56 shrink-0 flex-col gap-1 border-r border-line px-3 py-6 lg:flex">
-      <p className="px-3 pb-4 font-display text-2xl font-semibold tracking-tight">México 2027</p>
+    <nav aria-label={t('Secciones', 'Sections')} className="hidden w-56 shrink-0 flex-col gap-1 border-r border-line px-3 py-6 lg:flex">
+      <p className="px-3 pb-4 font-display text-2xl font-semibold tracking-tight">{t('México 2027', 'Mexico 2027')}</p>
       {TABS.map(({ id, label, icon: Icon }) => {
         const activo = tab === id;
         return (
@@ -69,6 +70,26 @@ export function SideNav() {
           </button>
         );
       })}
+      <div
+        role="group"
+        aria-label={t('Idioma', 'Language')}
+        className="mt-auto flex gap-1 px-3 pt-4 text-[14px]"
+      >
+        {(['es', 'en'] as const).map((l) => (
+          <button
+            key={l}
+            type="button"
+            aria-pressed={LANG === l}
+            onClick={() => LANG !== l && cambiarIdioma(l)}
+            className={cx(
+              'min-h-9 rounded-lg px-3 font-semibold transition-colors',
+              LANG === l ? 'bg-rosa-soft text-rosa-ink' : 'text-muted hover:bg-sunken',
+            )}
+          >
+            {l === 'es' ? 'ES' : 'EN'}
+          </button>
+        ))}
+      </div>
     </nav>
   );
 }

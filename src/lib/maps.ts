@@ -18,6 +18,7 @@ export function ciudadMaps(ciudad: string): string {
     case 'Valladolid':
       return `${ciudad}, Yucatán`;
     case 'Cancún':
+    case 'Playa del Carmen':
     case 'Cozumel':
       return `${ciudad}, Quintana Roo`;
     default:

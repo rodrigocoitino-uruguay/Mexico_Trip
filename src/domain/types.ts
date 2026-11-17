@@ -7,7 +7,15 @@ export type Moneda = 'MXN' | 'USD';
 /** Cómo de confiable es un dato del plan. Sin valor = dato del plan sin marca. */
 export type Fiabilidad = 'verificado' | 'estimado' | 'sin_verificar';
 
-export type Ciudad = 'CDMX' | 'Mérida' | 'Izamal/Valladolid' | 'Valladolid' | 'Cancún' | 'Cozumel' | 'Viaje';
+export type Ciudad =
+  | 'CDMX'
+  | 'Mérida'
+  | 'Izamal/Valladolid'
+  | 'Valladolid'
+  | 'Cancún'
+  | 'Playa del Carmen'
+  | 'Cozumel'
+  | 'Viaje';
 /** Ciudades con alojamiento a elegir (las del núcleo del viaje). */
 export type CiudadAlojamiento = 'CDMX' | 'Mérida' | 'Valladolid';
 
@@ -257,7 +265,6 @@ export interface PlanPresupuesto {
   despues: ExtraPresupuesto[];
   subtotalDespuesUSD: number;
   totalViaje: { bajo: number; central: number; alto: number };
-  totalViajeSinNoche26: { bajo: number; central: number; alto: number };
   margen: string[];
   reglas: string[];
   categoriaFinanzas: string;

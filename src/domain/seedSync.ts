@@ -21,6 +21,17 @@ export const CAMPOS_DEL_USUARIO: Record<string, readonly string[]> = {
 /** Clave de un registro del seed que borraste (para no resucitarlo al actualizar). */
 export const claveBorrado = (tabla: string, id: string) => `${tabla}:${id}`;
 
+/** Ids del seed viejo que hay que borrar de la tabla (los que no editaste). */
+export function planRetiros<T extends Registro>(
+  retirados: readonly string[] | undefined,
+  existentes: ReadonlyMap<string, T>,
+): string[] {
+  return (retirados ?? []).filter((id) => {
+    const r = existentes.get(id);
+    return !!r && !!r.delSeed && !r.editadoPorUsuario;
+  });
+}
+
 /**
  * Qué escribir en una tabla para llevarla a la versión nueva del seed:
  * - lo que no existe (y no borraste) se agrega;

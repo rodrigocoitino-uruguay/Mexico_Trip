@@ -2,13 +2,14 @@ import { ChevronLeft, ChevronRight, Info as InfoIcon, LifeBuoy, Settings, Wallet
 import { Ajustes } from '../ajustes/Ajustes';
 import { Info, PlanB } from '../info/Info';
 import { Presupuesto } from '../presupuesto/Presupuesto';
+import { t } from '../../i18n';
 import { useUI, type SeccionMas } from '../../store/ui';
 
 const SECCIONES: { id: SeccionMas; label: string; detalle: string; icon: LucideIcon }[] = [
-  { id: 'presupuesto', label: 'Presupuesto', detalle: 'Tope, gastos y escenarios', icon: Wallet },
-  { id: 'info', label: 'Info práctica', detalle: 'Ingreso, dinero, salud, equipaje, contactos', icon: InfoIcon },
-  { id: 'planb', label: 'Plan B', detalle: 'Si pasa esto, hacé esto', icon: LifeBuoy },
-  { id: 'ajustes', label: 'Ajustes', detalle: 'Tipo de cambio, tema, respaldo', icon: Settings },
+  { id: 'presupuesto', label: t('Presupuesto', 'Budget'), detalle: t('Tope, gastos y escenarios', 'Cap, expenses and scenarios'), icon: Wallet },
+  { id: 'info', label: t('Info práctica', 'Practical info'), detalle: t('Ingreso, dinero, salud, equipaje, contactos', 'Entry, money, health, luggage, contacts'), icon: InfoIcon },
+  { id: 'planb', label: t('Plan B', 'Plan B'), detalle: t('Si pasa esto, hacé esto', 'If this happens, do this'), icon: LifeBuoy },
+  { id: 'ajustes', label: t('Ajustes', 'Settings'), detalle: t('Tipo de cambio, tema, respaldo', 'Exchange rate, theme, backup'), icon: Settings },
 ];
 
 export function Mas() {
@@ -24,7 +25,7 @@ export function Mas() {
           onClick={() => abrir(null)}
           className="-ml-2 flex min-h-11 items-center gap-1 rounded-xl px-2 font-medium text-rosa-ink"
         >
-          <ChevronLeft size={20} aria-hidden="true" /> Más
+          <ChevronLeft size={20} aria-hidden="true" /> {t('Más', 'More')}
         </button>
         <h2 className="mb-3 font-display text-[24px] font-semibold">{s.label}</h2>
         {seccion === 'presupuesto' && <Presupuesto />}

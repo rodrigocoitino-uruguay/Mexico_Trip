@@ -1,13 +1,14 @@
 import { BedSingle, Bus, ClipboardList, Landmark, Music, Utensils, Waves, type LucideIcon } from 'lucide-react';
 import type { Actividad, CategoriaActividad } from '../../domain/types';
+import { t } from '../../i18n';
 
 export const CATEGORIAS: { id: CategoriaActividad; label: string }[] = [
-  { id: 'atraccion', label: 'Atracción' },
-  { id: 'comida', label: 'Comida' },
-  { id: 'traslado', label: 'Traslado' },
-  { id: 'noche', label: 'Noche' },
-  { id: 'descanso', label: 'Descanso' },
-  { id: 'logistica', label: 'Logística' },
+  { id: 'atraccion', label: t('Atracción', 'Attraction') },
+  { id: 'comida', label: t('Comida', 'Food') },
+  { id: 'traslado', label: t('Traslado', 'Transport') },
+  { id: 'noche', label: t('Noche', 'Night out') },
+  { id: 'descanso', label: t('Descanso', 'Rest') },
+  { id: 'logistica', label: t('Logística', 'Logistics') },
 ];
 
 const ESTILO: Record<CategoriaActividad, { icon: LucideIcon; punto: string }> = {

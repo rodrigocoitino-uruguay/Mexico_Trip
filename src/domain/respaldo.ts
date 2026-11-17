@@ -1,3 +1,4 @@
+import { t, t as i18n } from '../i18n';
 import type { Ajustes, Registro } from './types';
 
 export const FORMATO_RESPALDO = 'mexico-2027-respaldo';
@@ -40,25 +41,25 @@ const esTexto = (v: unknown, max: number): v is string => typeof v === 'string' 
 
 /** Lee y controla un respaldo: formato, versión y que cada registro tenga id y fecha de cambio. */
 export function parseRespaldo(texto: string): Respaldo {
-  if (texto.length > MAX_RESPALDO_BYTES) throw new RespaldoError('El archivo es demasiado grande');
+  if (texto.length > MAX_RESPALDO_BYTES) throw new RespaldoError(t('El archivo es demasiado grande', 'The file is too large'));
   let raw: unknown;
   try {
     raw = JSON.parse(texto);
   } catch {
-    throw new RespaldoError('El archivo no es un respaldo (no es JSON)');
+    throw new RespaldoError(t('El archivo no es un respaldo (no es JSON)', 'The file is not a backup (it is not JSON)'));
   }
-  if (!esObj(raw) || raw.format !== FORMATO_RESPALDO) throw new RespaldoError('El archivo no es un respaldo de esta app');
+  if (!esObj(raw) || raw.format !== FORMATO_RESPALDO) throw new RespaldoError(t('El archivo no es un respaldo de esta app', 'The file is not a backup of this app'));
   if (typeof raw.version !== 'number' || raw.version > VERSION_RESPALDO) {
-    throw new RespaldoError('El respaldo es de una versión más nueva de la app. Actualizala y probá de nuevo.');
+    throw new RespaldoError(t('El respaldo es de una versión más nueva de la app. Actualizala y probá de nuevo.', 'The backup is from a newer version of the app. Update it and try again.'));
   }
-  if (!esObj(raw.tablas)) throw new RespaldoError('El respaldo está incompleto');
+  if (!esObj(raw.tablas)) throw new RespaldoError(t('El respaldo está incompleto', 'The backup is incomplete'));
   const tablas = {} as Record<TablaRespaldo, Registro[]>;
   for (const t of TABLAS_RESPALDO) {
     const lista = raw.tablas[t] ?? [];
-    if (!Array.isArray(lista) || lista.length > 50_000) throw new RespaldoError(`Lista inválida: ${t}`);
+    if (!Array.isArray(lista) || lista.length > 50_000) throw new RespaldoError(`${i18n('Lista inválida', 'Invalid list')}: ${t}`);
     tablas[t] = lista.map((r, i) => {
       if (!esObj(r) || !esTexto(r.id, 200) || !esTexto(r.updatedAt, 40)) {
-        throw new RespaldoError(`${t} #${i + 1}: registro inválido`);
+        throw new RespaldoError(`${t} #${i + 1}: ${i18n('registro inválido', 'invalid record')}`);
       }
       return r as unknown as Registro;
     });

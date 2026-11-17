@@ -1,6 +1,6 @@
-import { PRESUPUESTO, SEED, SEED_TABLES, SEED_VERSION, type SeedTable } from '../data/seed';
+import { PRESUPUESTO, SEED, SEED_RETIRADOS, SEED_TABLES, SEED_VERSION, type SeedTable } from '../data/seed';
 import type { Table } from 'dexie';
-import { claveBorrado, planSeedSync } from '../domain/seedSync';
+import { claveBorrado, planRetiros, planSeedSync } from '../domain/seedSync';
 import type { Ajustes, Registro } from '../domain/types';
 import type { ViajeDB } from './db';
 
@@ -27,6 +27,8 @@ export async function aplicarSeed(db: ViajeDB, { forzar = false } = {}): Promise
       const existentes = new Map((await tabla.toArray()).map((r) => [r.id, r]));
       const cambios = planSeedSync(t, SEED[t] as readonly Registro[], existentes, borrados);
       if (cambios.length) await tabla.bulkPut(cambios);
+      const retiros = planRetiros(SEED_RETIRADOS[t], existentes);
+      if (retiros.length) await tabla.bulkDelete(retiros);
     }
     if (!(await db.ajustes.get('ajustes'))) await db.ajustes.put(ajustesPorDefecto());
     await db.meta.put({ key: META_VERSION, value: SEED_VERSION });

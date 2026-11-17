@@ -2,7 +2,9 @@ import { Check, MapPin, NotebookPen, Plus, Receipt, SkipForward } from 'lucide-r
 import { setActiva, setEstado } from '../../db/actividades';
 import { cuenta } from '../../domain/actividades';
 import type { Actividad } from '../../domain/types';
+import { t } from '../../i18n';
 import { cx } from '../../lib/cx';
+import { horaVisible } from '../../lib/hora';
 import { ConUSD, MontoMXN } from '../../components/ui/Montos';
 import { estiloActividad } from './categorias';
 import { ChipsActividad } from './chips';
@@ -21,7 +23,7 @@ interface Props {
 
 export function Timeline({ actividades, seleccionada, proximaId, proximaCuando, enCursoId, onAbrir }: Props) {
   if (!actividades.length) {
-    return <p className="card p-5 text-center text-muted">No hay actividades este día.</p>;
+    return <p className="card p-5 text-center text-muted">{t('No hay actividades este día.', 'No activities this day.')}</p>;
   }
   return (
     <ol className="relative space-y-3">
@@ -88,12 +90,12 @@ function ActividadItem({
             type="button"
             onClick={onAbrir}
             className={cx('min-w-0 flex-1 rounded-xl p-3 pr-1 text-left active:bg-sunken', (hecho || saltado) && 'opacity-60')}
-            aria-label={`${a.hora ? `${a.hora}, ` : ''}${a.titulo}. Ver detalle`}
+            aria-label={`${a.hora ? `${horaVisible(a.hora)}, ` : ''}${a.titulo}. ${t('Ver detalle', 'See details')}`}
           >
             <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
-              {a.hora && <span className="text-[15px] font-bold text-rosa-ink tabular">{a.hora}</span>}
-              {enCurso && <span className="text-[13px] font-semibold text-cempa-ink">Ahora</span>}
-              {proxima && <span className="text-[13px] font-semibold text-cempa-ink">Próxima{proximaCuando && ` · ${proximaCuando}`}</span>}
+              {a.hora && <span className="text-[15px] font-bold text-rosa-ink tabular">{horaVisible(a.hora)}</span>}
+              {enCurso && <span className="text-[13px] font-semibold text-cempa-ink">{t('Ahora', 'Now')}</span>}
+              {proxima && <span className="text-[13px] font-semibold text-cempa-ink">{t('Próxima', 'Next')}{proximaCuando && ` · ${proximaCuando}`}</span>}
               <ChipsActividad a={a} />
             </p>
             <p className={cx('mt-1 text-[17px] leading-snug font-semibold', saltado && 'line-through')}>
@@ -115,7 +117,7 @@ function ActividadItem({
             {(a.nota || a.gastoRealMXN !== undefined) && (
               <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1 rounded-lg bg-sunken px-2 py-1.5 text-[14px]">
                 {a.gastoRealMXN !== undefined && (
-                  <span className="font-semibold tabular">Gastaste <MontoMXN valor={a.gastoRealMXN} /></span>
+                  <span className="font-semibold tabular">{t('Gastaste', 'You spent')} <MontoMXN valor={a.gastoRealMXN} /></span>
                 )}
                 {a.nota && (
                   <span className="flex min-w-0 gap-1">
@@ -133,7 +135,7 @@ function ActividadItem({
               onClick={() => void setActiva(a.id, true)}
               className="m-2 flex min-h-11 shrink-0 items-center gap-1 rounded-full bg-cempa-soft px-3 text-sm font-semibold text-cempa-ink active:opacity-70"
             >
-              <Plus size={16} aria-hidden="true" /> Activar
+              <Plus size={16} aria-hidden="true" /> {t('Activar', 'Enable')}
             </button>
           ) : (
             <BotonHecho a={a} />
@@ -148,7 +150,11 @@ function ActividadItem({
 function BotonHecho({ a }: { a: Actividad }) {
   const hecho = a.estado === 'hecho';
   const saltado = a.estado === 'saltado';
-  const label = hecho ? 'Marcar como pendiente' : saltado ? 'Volver a pendiente' : 'Marcar como hecha';
+  const label = hecho
+    ? t('Marcar como pendiente', 'Mark as pending')
+    : saltado
+      ? t('Volver a pendiente', 'Back to pending')
+      : t('Marcar como hecha', 'Mark as done');
   return (
     <button
       type="button"
@@ -189,22 +195,22 @@ export function PieDia({
   const hechas = actividades.filter((a) => cuenta(a) && a.estado === 'hecho').length;
   const total = actividades.filter(cuenta).length;
   return (
-    <section className="card mt-4 p-4" aria-label="Costo del día">
+    <section className="card mt-4 p-4" aria-label={t('Costo del día', 'Cost of the day')}>
       <div className="flex items-baseline justify-between gap-2">
-        <h3 className="font-display text-lg font-semibold">Costo del día</h3>
+        <h3 className="font-display text-lg font-semibold">{t('Costo del día', 'Cost of the day')}</h3>
         <span className="text-sm text-muted tabular">
-          {hechas} de {total} hechas
+          {t(`${hechas} de ${total} hechas`, `${hechas} of ${total} done`)}
         </span>
       </div>
       {central !== undefined ? (
         <dl className="mt-3 grid grid-cols-3 gap-2 text-center">
           {[
-            ['Bajo', bajo],
-            ['Central', central],
-            ['Alto', alto],
-          ].map(([k, v]) => (
+            ['Bajo', t('Bajo', 'Low'), bajo],
+            ['Central', t('Central', 'Mid'), central],
+            ['Alto', t('Alto', 'High'), alto],
+          ].map(([k, etiqueta, v]) => (
             <div key={k as string} className={cx('rounded-xl p-2', k === 'Central' ? 'bg-rosa-soft' : 'bg-sunken')}>
-              <dt className="text-[13px] text-muted">{k}</dt>
+              <dt className="text-[13px] text-muted">{etiqueta}</dt>
               <dd className={cx('font-semibold tabular', k === 'Central' && 'text-rosa-ink')}>
                 {v !== undefined ? <MontoMXN valor={v as number} apilado /> : "—"}
               </dd>
@@ -215,12 +221,12 @@ export function PieDia({
         nota && <p className="mt-2 text-[15px] text-muted">{nota}</p>
       )}
       <p className="mt-3 flex items-baseline justify-between border-t border-line pt-3">
-        <span>Gasto real cargado</span>
+        <span>{t('Gasto real cargado', 'Actual spending logged')}</span>
         <span className="font-semibold tabular">
           {conGasto ? <MontoMXN valor={real} /> : "—"}
           {central !== undefined && conGasto > 0 && (
             <span className={cx('ml-2 text-sm', real > central ? 'text-rojo' : 'text-verde')}>
-              {real > central ? 'por encima' : 'dentro'} del central
+              {real > central ? t('por encima del central', 'above the mid estimate') : t('dentro del central', 'within the mid estimate')}
             </span>
           )}
         </span>
