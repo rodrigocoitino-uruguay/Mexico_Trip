@@ -60,6 +60,6 @@ describe('exportar e importar JSON (pasar datos entre celular y compu)', () => {
     expect(await db.gastos.count()).toBe(0);
     await gastos.deshacerBorradoGasto(borrado!);
     expect(await db.gastos.count()).toBe(1);
-    expect((await db.meta.get('borradosSeed'))?.value).toEqual([]);
+    expect((await db.meta.get('borradosSeed'))?.value).not.toContain(`gastos:${g.id}`);
   });
 });

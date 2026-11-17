@@ -68,9 +68,9 @@ describe('Antes del viaje', () => {
 
   it('las 3 tareas más urgentes', () => {
     const urg = pendientesUrgentes(SEED.pendientes);
-    expect(urg.map((p) => p.id)).toEqual(['p-empresa', 'p-vuelo-merida', 'p-hostel-cdmx']);
-    const hechas = SEED.pendientes.map((p) => (p.id === 'p-empresa' ? { ...p, hecho: true } : p));
-    expect(pendientesUrgentes(hechas)[2].id).toBe('p-hostels-yucatan');
+    expect(urg.map((p) => p.id)).toEqual(['p-vuelo-merida', 'p-hostel-cdmx', 'p-hostels-yucatan']);
+    const hechas = SEED.pendientes.map((p) => (p.id === 'p-vuelo-merida' ? { ...p, hecho: true } : p));
+    expect(pendientesUrgentes(hechas)[2].id).toBe('p-palacio-nacional');
   });
 
   it('urgencia: vencida, menos de 7 días, con tiempo', () => {

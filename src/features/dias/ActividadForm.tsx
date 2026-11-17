@@ -2,6 +2,7 @@ import { useId, useState, type FormEvent } from 'react';
 import type { DatosActividad } from '../../domain/actividades';
 import type { Actividad, CategoriaActividad } from '../../domain/types';
 import { montoInput, parseMonto } from '../../lib/numeros';
+import { t } from '../../lib/i18n';
 import { CATEGORIAS } from './categorias';
 
 interface Props {
@@ -26,9 +27,9 @@ export function ActividadForm({ inicial, onGuardar, onCancelar }: Props) {
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (!titulo.trim()) return setError('Poné un título.');
+    if (!titulo.trim()) return setError(t('Poné un título.'));
     const costoMXN = parseMonto(costo);
-    if (costo.trim() && costoMXN === undefined) return setError('El costo estimado tiene que ser un número.');
+    if (costo.trim() && costoMXN === undefined) return setError(t('El costo estimado tiene que ser un número.'));
     void onGuardar({ hora, titulo, categoria, descripcion: descripcion.trim(), comoLlegar, costoTexto, costoMXN });
   };
 
@@ -37,7 +38,7 @@ export function ActividadForm({ inicial, onGuardar, onCancelar }: Props) {
       <div className="grid grid-cols-[7.5rem_1fr] gap-3">
         <div>
           <label htmlFor={`${id}-hora`} className="mb-1 block text-sm font-semibold">
-            Hora
+            {t('Hora')}
           </label>
           <input
             id={`${id}-hora`}
@@ -49,7 +50,7 @@ export function ActividadForm({ inicial, onGuardar, onCancelar }: Props) {
         </div>
         <div>
           <label htmlFor={`${id}-cat`} className="mb-1 block text-sm font-semibold">
-            Tipo
+            {t('Tipo')}
           </label>
           <select
             id={`${id}-cat`}
@@ -59,17 +60,17 @@ export function ActividadForm({ inicial, onGuardar, onCancelar }: Props) {
           >
             {CATEGORIAS.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.label}
+                {t(c.label)}
               </option>
             ))}
           </select>
         </div>
       </div>
-      <p className="-mt-2 text-[13px] text-muted">Podés escribir "9:00–13:30" o "aprox. 11:30". Se ordena sola por la hora.</p>
+      <p className="-mt-2 text-[13px] text-muted">{t('Podés escribir "9:00–13:30" o "aprox. 11:30". Se ordena sola por la hora.')}</p>
 
       <div>
         <label htmlFor={`${id}-titulo`} className="mb-1 block text-sm font-semibold">
-          Título
+          {t('Título')}
         </label>
         <input
           id={`${id}-titulo`}
@@ -83,7 +84,7 @@ export function ActividadForm({ inicial, onGuardar, onCancelar }: Props) {
       </div>
       <div>
         <label htmlFor={`${id}-desc`} className="mb-1 block text-sm font-semibold">
-          Qué hacer
+          {t('Qué hacer')}
         </label>
         <textarea
           id={`${id}-desc`}
@@ -95,7 +96,7 @@ export function ActividadForm({ inicial, onGuardar, onCancelar }: Props) {
       </div>
       <div>
         <label htmlFor={`${id}-llegar`} className="mb-1 block text-sm font-semibold">
-          Cómo llegar
+          {t('Cómo llegar')}
         </label>
         <input
           id={`${id}-llegar`}
@@ -107,19 +108,19 @@ export function ActividadForm({ inicial, onGuardar, onCancelar }: Props) {
       <div className="grid grid-cols-[1fr_7.5rem] gap-3">
         <div>
           <label htmlFor={`${id}-costotxt`} className="mb-1 block text-sm font-semibold">
-            Costo (texto)
+            {t('Costo (texto)')}
           </label>
           <input
             id={`${id}-costotxt`}
             value={costoTexto}
             onChange={(e) => setCostoTexto(e.target.value)}
-            placeholder="MXN 150 a 250"
+            placeholder={t('MXN 150 a 250')}
             className={`${campo} min-h-12`}
           />
         </div>
         <div>
           <label htmlFor={`${id}-costo`} className="mb-1 block text-sm font-semibold">
-            Estimado MXN
+            {t('Estimado MXN')}
           </label>
           <input
             id={`${id}-costo`}
@@ -146,10 +147,10 @@ export function ActividadForm({ inicial, onGuardar, onCancelar }: Props) {
           onClick={onCancelar}
           className="min-h-12 flex-1 rounded-full bg-sunken px-4 font-semibold active:opacity-70"
         >
-          Cancelar
+          {t('Cancelar')}
         </button>
         <button type="submit" className="min-h-12 flex-1 rounded-full bg-rosa-ink px-4 font-semibold text-white active:opacity-80">
-          Guardar
+          {t('Guardar')}
         </button>
       </div>
     </form>

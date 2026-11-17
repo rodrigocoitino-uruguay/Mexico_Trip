@@ -1,5 +1,7 @@
 import { CalendarDays, ClipboardCheck, Ellipsis, MapPin, Sun, type LucideIcon } from 'lucide-react';
 import { cx } from '../lib/cx';
+import { t, INGLES } from '../lib/i18n';
+import { urlEnIdioma } from '../lib/idioma';
 import { useUI, type Tab } from '../store/ui';
 
 export const TABS: { id: Tab; label: string; icon: LucideIcon }[] = [
@@ -16,7 +18,7 @@ export function TabBar() {
   const setTab = useUI((s) => s.setTab);
   return (
     <nav
-      aria-label="Secciones"
+      aria-label={t('Secciones')}
       className="shrink-0 border-t border-line bg-surface/95 backdrop-blur-xl lg:hidden"
       style={{ paddingBottom: 'var(--safe-bottom)' }}
     >
@@ -35,7 +37,7 @@ export function TabBar() {
               )}
             >
               <Icon size={23} strokeWidth={activo ? 2.1 : 1.6} aria-hidden="true" />
-              <span className={cx('text-[11px] leading-none', activo && 'font-semibold')}>{label}</span>
+              <span className={cx('text-[11px] leading-none', activo && 'font-semibold')}>{t(label)}</span>
             </button>
           );
         })}
@@ -49,8 +51,8 @@ export function SideNav() {
   const tab = useUI((s) => s.tab);
   const setTab = useUI((s) => s.setTab);
   return (
-    <nav aria-label="Secciones" className="hidden w-56 shrink-0 flex-col gap-1 border-r border-line px-3 py-6 lg:flex">
-      <p className="px-3 pb-4 font-display text-2xl font-semibold tracking-tight">México 2027</p>
+    <nav aria-label={t('Secciones')} className="hidden w-56 shrink-0 flex-col gap-1 border-r border-line px-3 py-6 lg:flex">
+      <p className="px-3 pb-4 font-display text-2xl font-semibold tracking-tight">{t('México 2027')}</p>
       {TABS.map(({ id, label, icon: Icon }) => {
         const activo = tab === id;
         return (
@@ -65,10 +67,40 @@ export function SideNav() {
             )}
           >
             <Icon size={20} strokeWidth={activo ? 2.1 : 1.7} aria-hidden="true" />
-            {label}
+            {t(label)}
           </button>
         );
       })}
+      <SelectorIdioma />
     </nav>
+  );
+}
+
+/**
+ * Cambia entre español e inglés (la versión en inglés es para mostrar en una reunión).
+ * Solo está en la barra lateral, o sea solo en la web de escritorio. Recarga la página
+ * porque el idioma se decide al abrirla (y cada idioma tiene su propia base de datos).
+ */
+function SelectorIdioma() {
+  return (
+    <div className="mt-auto flex gap-1 px-3 pt-6" role="group" aria-label={t('Idioma')}>
+      {(['es', 'en'] as const).map((id) => {
+        const activo = (INGLES ? 'en' : 'es') === id;
+        return (
+          <a
+            key={id}
+            href={urlEnIdioma(id)}
+            lang={id}
+            aria-current={activo ? 'true' : undefined}
+            className={cx(
+              'flex min-h-9 flex-1 items-center justify-center rounded-lg text-[14px] font-semibold uppercase transition-colors',
+              activo ? 'bg-rosa-soft text-rosa-ink' : 'text-muted hover:bg-sunken',
+            )}
+          >
+            {id}
+          </a>
+        );
+      })}
+    </div>
   );
 }

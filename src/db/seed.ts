@@ -1,4 +1,4 @@
-import { PRESUPUESTO, SEED, SEED_TABLES, SEED_VERSION, type SeedTable } from '../data/seed';
+import { PRESUPUESTO, SEED, SEED_RETIRADOS, SEED_TABLES, SEED_VERSION, type SeedTable } from '../data/seed';
 import type { Table } from 'dexie';
 import { claveBorrado, planSeedSync } from '../domain/seedSync';
 import type { Ajustes, Registro } from '../domain/types';
@@ -22,6 +22,7 @@ export async function aplicarSeed(db: ViajeDB, { forzar = false } = {}): Promise
     const version = (await db.meta.get(META_VERSION))?.value;
     if (!forzar && version === SEED_VERSION) return false;
     const borrados = new Set(((await db.meta.get(META_BORRADOS))?.value as string[] | undefined) ?? []);
+    await retirarDelSeed(db, borrados);
     for (const t of SEED_TABLES) {
       const tabla = db[t] as unknown as Table<Registro, string>;
       const existentes = new Map((await tabla.toArray()).map((r) => [r.id, r]));
@@ -32,6 +33,18 @@ export async function aplicarSeed(db: ViajeDB, { forzar = false } = {}): Promise
     await db.meta.put({ key: META_VERSION, value: SEED_VERSION });
     return true;
   });
+}
+
+/** Saca lo que el seed ya no trae y lo anota como borrado (así un respaldo viejo no lo trae de vuelta). */
+async function retirarDelSeed(db: ViajeDB, borrados: Set<string>): Promise<void> {
+  const antes = borrados.size;
+  for (const clave of SEED_RETIRADOS) {
+    borrados.add(clave);
+    const [t, id] = clave.split(':') as [SeedTable, string];
+    const tabla = db[t] as unknown as Table<Registro, string>;
+    if ((await tabla.get(id))?.delSeed) await tabla.delete(id);
+  }
+  if (borrados.size !== antes) await db.meta.put({ key: META_BORRADOS, value: [...borrados] });
 }
 
 /** Borra todo lo que cargaste y vuelve a los datos originales (mantiene los ajustes). */

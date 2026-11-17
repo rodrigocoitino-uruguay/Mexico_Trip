@@ -1,5 +1,7 @@
-const fmt0 = new Intl.NumberFormat('es-UY', { maximumFractionDigits: 0 });
-const fmt2 = new Intl.NumberFormat('es-UY', { maximumFractionDigits: 2 });
+import { LOCALE } from './i18n';
+
+const fmt0 = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 0 });
+const fmt2 = new Intl.NumberFormat(LOCALE, { maximumFractionDigits: 2 });
 
 /** 'MXN 1.267' */
 export function mxn(n: number): string {

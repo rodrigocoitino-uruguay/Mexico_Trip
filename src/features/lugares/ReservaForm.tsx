@@ -1,6 +1,8 @@
 import { useId, useState, type FormEvent } from 'react';
 import { linkSeguro } from '../../domain/reservas';
 import type { Moneda, Reserva } from '../../domain/types';
+import { diaMes } from '../../lib/fechas';
+import { t } from '../../lib/i18n';
 import { montoInput, parseMonto } from '../../lib/numeros';
 
 interface Props {
@@ -33,9 +35,9 @@ export function ReservaForm(p: Props) {
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const precioPagado = parseMonto(precio);
-    if (precio.trim() && precioPagado === undefined) return setError('El precio tiene que ser un número.');
-    if (link.trim() && !linkSeguro(link)) return setError('Ese link no parece una dirección web.');
-    if (p.conCheckout && checkIn && checkOut && checkOut <= checkIn) return setError('El check-out tiene que ser después del check-in.');
+    if (precio.trim() && precioPagado === undefined) return setError(t('El precio tiene que ser un número.'));
+    if (link.trim() && !linkSeguro(link)) return setError(t('Ese link no parece una dirección web.'));
+    if (p.conCheckout && checkIn && checkOut && checkOut <= checkIn) return setError(t('El check-out tiene que ser después del check-in.'));
     void p.onGuardar({
       codigo,
       checkIn: checkIn || undefined,
@@ -49,24 +51,24 @@ export function ReservaForm(p: Props) {
 
   return (
     <form onSubmit={submit} className="space-y-4" noValidate>
-      <p className="text-[15px] text-muted">Todo es opcional: podés completarlo después.</p>
+      <p className="text-[15px] text-muted">{t('Todo es opcional: podés completarlo después.')}</p>
       <div>
         <label htmlFor={`${id}-cod`} className="mb-1 block text-sm font-semibold">
-          Código de reserva
+          {t('Código de reserva')}
         </label>
         <input id={`${id}-cod`} value={codigo} onChange={(e) => setCodigo(e.target.value)} autoComplete="off" className={campo} />
       </div>
       <div className={p.conCheckout ? 'grid grid-cols-2 gap-3' : ''}>
         <div>
           <label htmlFor={`${id}-in`} className="mb-1 block text-sm font-semibold">
-            {p.conCheckout ? 'Check-in' : 'Fecha'}
+            {p.conCheckout ? t('Check-in') : t('Fecha')}
           </label>
           <input id={`${id}-in`} type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className={campo} />
         </div>
         {p.conCheckout && (
           <div>
             <label htmlFor={`${id}-out`} className="mb-1 block text-sm font-semibold">
-              Check-out
+              {t('Check-out')}
             </label>
             <input id={`${id}-out`} type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} className={campo} />
           </div>
@@ -75,7 +77,7 @@ export function ReservaForm(p: Props) {
       <div className="grid grid-cols-[1fr_6.5rem] gap-3">
         <div>
           <label htmlFor={`${id}-precio`} className="mb-1 block text-sm font-semibold">
-            Precio pagado
+            {t('Precio pagado')}
           </label>
           <input
             id={`${id}-precio`}
@@ -90,7 +92,7 @@ export function ReservaForm(p: Props) {
         </div>
         <div>
           <label htmlFor={`${id}-mon`} className="mb-1 block text-sm font-semibold">
-            Moneda
+            {t('Moneda')}
           </label>
           <select id={`${id}-mon`} value={moneda} onChange={(e) => setMoneda(e.target.value as Moneda)} className={campo}>
             <option value="USD">USD</option>
@@ -100,7 +102,7 @@ export function ReservaForm(p: Props) {
       </div>
       <div>
         <label htmlFor={`${id}-link`} className="mb-1 block text-sm font-semibold">
-          Link de la reserva
+          {t('Link de la reserva')}
         </label>
         <input
           id={`${id}-link`}
@@ -117,7 +119,7 @@ export function ReservaForm(p: Props) {
       </div>
       <div>
         <label htmlFor={`${id}-notas`} className="mb-1 block text-sm font-semibold">
-          Notas
+          {t('Notas')}
         </label>
         <textarea
           id={`${id}-notas`}
@@ -134,7 +136,7 @@ export function ReservaForm(p: Props) {
       )}
       <div className="flex gap-2">
         <button type="button" onClick={p.onCancelar} className="min-h-12 flex-1 rounded-full bg-sunken font-semibold active:opacity-70">
-          Cancelar
+          {t('Cancelar')}
         </button>
         <button type="submit" className="min-h-12 flex-1 rounded-full bg-verde px-4 font-semibold text-white active:opacity-80">
           {p.textoGuardar}
@@ -147,11 +149,11 @@ export function ReservaForm(p: Props) {
 /** Datos de una reserva ya hecha, compactos. */
 export function DatosReserva({ r }: { r: Reserva }) {
   const filas: [string, string][] = [];
-  if (r.codigo) filas.push(['Código', r.codigo]);
-  if (r.checkIn && r.checkOut) filas.push(['Fechas', `${fecha(r.checkIn)} → ${fecha(r.checkOut)}`]);
-  else if (r.checkIn) filas.push(['Fecha', fecha(r.checkIn)]);
-  if (r.precioPagado !== undefined) filas.push(['Pagaste', `${r.moneda ?? ''} ${montoInput(r.precioPagado)}`.trim()]);
-  if (r.notas) filas.push(['Notas', r.notas]);
+  if (r.codigo) filas.push([t('Código'), r.codigo]);
+  if (r.checkIn && r.checkOut) filas.push([t('Fechas'), `${fecha(r.checkIn)} → ${fecha(r.checkOut)}`]);
+  else if (r.checkIn) filas.push([t('Fecha'), fecha(r.checkIn)]);
+  if (r.precioPagado !== undefined) filas.push([t('Pagaste'), `${r.moneda ?? ''} ${montoInput(r.precioPagado)}`.trim()]);
+  if (r.notas) filas.push([t('Notas'), r.notas]);
   const link = linkSeguro(r.link);
   if (!filas.length && !link) return null;
   return (
@@ -164,7 +166,7 @@ export function DatosReserva({ r }: { r: Reserva }) {
       ))}
       {link && (
         <a href={link} target="_blank" rel="noopener noreferrer" className="inline-block min-h-11 py-2 font-semibold text-azul underline">
-          Abrir la reserva
+          {t('Abrir la reserva')}
         </a>
       )}
     </dl>
@@ -172,6 +174,5 @@ export function DatosReserva({ r }: { r: Reserva }) {
 }
 
 function fecha(iso: string) {
-  const [, m, d] = iso.split('-');
-  return `${Number(d)}/${Number(m)}`;
+  return diaMes(iso);
 }

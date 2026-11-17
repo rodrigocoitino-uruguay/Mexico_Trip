@@ -1,3 +1,4 @@
+import { t } from '../lib/i18n';
 import { cuenta } from './actividades';
 import { fechaEnZona, minutosEnZona, parseHora } from './tiempo';
 import type { Actividad, Dia, Gasto, Pendiente } from './types';
@@ -44,11 +45,11 @@ export function proximaActividad(
 
 /** 'en 45 min', 'en 1 h 15', 'ahora' */
 export function textoEnMinutos(min: number): string {
-  if (min <= 2) return 'ahora';
-  if (min < 60) return `en ${min} min`;
+  if (min <= 2) return t('ahora');
+  if (min < 60) return t('en {min} min', { min });
   const h = Math.floor(min / 60);
   const r = min % 60;
-  return r ? `en ${h} h ${String(r).padStart(2, '0')}` : `en ${h} h`;
+  return r ? t('en {h} h {r}', { h, r: String(r).padStart(2, '0') }) : t('en {h} h', { h });
 }
 
 /** Salida: vuelo Copa del vie 12/2 a las 3:06 de Montevideo (salís de casa la noche del jueves). */

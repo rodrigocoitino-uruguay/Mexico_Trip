@@ -38,7 +38,7 @@ describe('acciones sobre actividades (se guardan en IndexedDB)', () => {
     expect(await db.actividades.get('2027-02-14-09')).toBeUndefined();
     await acts.deshacerBorrado(borrada!);
     expect((await db.actividades.get('2027-02-14-09'))?.titulo).toBe('Salón Los Ángeles');
-    expect((await db.meta.get('borradosSeed'))?.value).toEqual([]);
+    expect((await db.meta.get('borradosSeed'))?.value).not.toContain('actividades:2027-02-14-09');
   });
 
   it('editar la hora y agregar una nueva', async () => {

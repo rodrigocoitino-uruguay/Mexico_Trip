@@ -6,12 +6,13 @@ import { db } from '../../db/db';
 import { setHecho } from '../../db/pendientes';
 import { porOrden } from '../../domain/actividades';
 import { alojamientoDeNoche } from '../../domain/alojamiento';
-import { COLOR_CIUDAD } from '../../domain/ciudades';
+import { COLOR_CIUDAD, nombreCiudad } from '../../domain/ciudades';
 import { cuentaRegresiva, gastoDelDia, pendientesUrgentes, urgencia } from '../../domain/hoy';
 import { fechaEnZona, momentoViaje } from '../../domain/tiempo';
 import type { Actividad, Dia, Gasto, OpcionAlojamiento, Pendiente } from '../../domain/types';
 import { cx } from '../../lib/cx';
 import { diaCorto, diaLargo, diaMes } from '../../lib/fechas';
+import { t } from '../../lib/i18n';
 import { mapsUrl } from '../../lib/maps';
 import { useAhora } from '../../lib/reloj';
 import { toast } from '../../store/toast';
@@ -50,7 +51,7 @@ export function Hoy() {
               <p className="flex items-center gap-2 text-[15px] text-muted">
                 <span className="capitalize">{diaLargo(dia.fecha)}</span>
                 <span className={cx('rounded-full px-2 text-[12px] font-semibold', COLOR_CIUDAD[dia.ciudad].chip)}>
-                  {dia.ciudad}
+                  {nombreCiudad(dia.ciudad)}
                 </span>
               </p>
               <h2 className="mt-1 font-display text-[26px] leading-tight font-semibold tracking-tight">{dia.titulo}</h2>
@@ -90,7 +91,7 @@ function TarjetaHoy({
   const pasado = central !== undefined && real > central;
 
   return (
-    <section className="card divide-y divide-line" aria-label="Resumen de hoy">
+    <section className="card divide-y divide-line" aria-label={t('Resumen de hoy')}>
       {/* Dónde dormís */}
       <div className="flex items-center gap-3 p-3">
         {dia.nocheEn || !dia.nocheTexto?.startsWith('En el avión') ? (
@@ -99,12 +100,12 @@ function TarjetaHoy({
           <Plane size={22} className="shrink-0 text-azul" aria-hidden="true" />
         )}
         <div className="min-w-0 flex-1 leading-snug">
-          <p className="text-[13px] text-muted">Hoy dormís en</p>
+          <p className="text-[13px] text-muted">{t('Hoy dormís en')}</p>
           {noche ? (
             <>
               <p className="font-semibold">
                 {noche.opcion.nombre}
-                {!noche.reservado && <span className="ml-1 text-[13px] font-medium text-cempa-ink">· sin reservar</span>}
+                {!noche.reservado && <span className="ml-1 text-[13px] font-medium text-cempa-ink">· {t('sin reservar')}</span>}
               </p>
               <p className="text-[14px] text-muted">{noche.opcion.direccion.split(',').slice(0, 2).join(',')}</p>
             </>
@@ -137,11 +138,11 @@ function TarjetaHoy({
         <div className="min-w-0 flex-1">
           <p className="flex flex-wrap items-baseline justify-between gap-x-2 text-[15px]">
             <span>
-              Gastaste <strong className="tabular">{real ? <MontoMXN valor={real} /> : 'MXN 0'}</strong>
+              {t('Gastaste')} <strong className="tabular">{real ? <MontoMXN valor={real} /> : 'MXN 0'}</strong>
             </span>
             {central !== undefined && (
               <span className="text-[14px] text-muted tabular">
-                de <MontoMXN valor={central} /> est.
+                {t('de')} <MontoMXN valor={central} /> {t('est.')}
               </span>
             )}
           </p>
@@ -149,7 +150,7 @@ function TarjetaHoy({
             <div
               className="mt-2 h-2 overflow-hidden rounded-full bg-sunken"
               role="progressbar"
-              aria-label="Gasto del día contra lo estimado"
+              aria-label={t('Gasto del día contra lo estimado')}
               aria-valuemin={0}
               aria-valuemax={100}
               aria-valuenow={Math.round(pct)}
@@ -178,20 +179,20 @@ function Antes({ now, pendientes }: { now: Date; pendientes: Pendiente[] }) {
         {dias > 0 ? (
           <>
             <p className="font-display text-[64px] leading-none font-semibold text-rosa-ink tabular">{dias}</p>
-            <p className="mt-1 text-lg font-semibold">{dias === 1 ? 'día para salir' : 'días para salir'}</p>
+            <p className="mt-1 text-lg font-semibold">{dias === 1 ? t('día para salir') : t('días para salir')}</p>
           </>
         ) : (
           <>
-            <p className="font-display text-[44px] leading-none font-semibold text-rosa-ink">Hoy salís</p>
-            <p className="mt-2 text-lg font-semibold tabular">Faltan {horas} h para el vuelo</p>
+            <p className="font-display text-[44px] leading-none font-semibold text-rosa-ink">{t('Hoy salís')}</p>
+            <p className="mt-2 text-lg font-semibold tabular">{t('Faltan {horas} h para el vuelo', { horas })}</p>
           </>
         )}
-        <p className="mt-2 text-[15px] text-muted">{"Jue 11/2 de noche a Carrasco · Copa 3:06\u00a0a.\u00a0m."}</p>
+        <p className="mt-2 text-[15px] text-muted">{t('Jue 11/2 de noche a Carrasco · Copa 3:06\u00a0a.\u00a0m.')}</p>
       </section>
 
       <section className="card p-4" aria-labelledby="urgentes">
         <h2 id="urgentes" className="font-display text-lg font-semibold">
-          Lo más urgente
+          {t('Lo más urgente')}
         </h2>
         {urgentes.length ? (
           <ul className="mt-2 divide-y divide-line">
@@ -203,11 +204,11 @@ function Antes({ now, pendientes }: { now: Date; pendientes: Pendiente[] }) {
                     type="button"
                     role="checkbox"
                     aria-checked={p.hecho}
-                    aria-label={`Hecho: ${p.titulo}`}
+                    aria-label={t('Hecho: {titulo}', { titulo: p.titulo })}
                     onClick={() =>
                       void setHecho(p.id, true).then(() =>
-                        toast(`Hecho: ${p.titulo}`, {
-                          actionLabel: 'Deshacer',
+                        toast(t('Hecho: {titulo}', { titulo: p.titulo }), {
+                          actionLabel: t('Deshacer'),
                           onAction: () => void setHecho(p.id, false),
                           duration: 5000,
                         }),
@@ -226,25 +227,25 @@ function Antes({ now, pendientes }: { now: Date; pendientes: Pendiente[] }) {
                           u === 'vencida' ? 'text-rojo' : u === 'pronto' ? 'text-cempa-ink' : 'text-muted',
                         )}
                       >
-                        {u === 'vencida' ? 'Venció el' : 'Antes del'} {diaMes(p.fechaLimite)}
+                        {u === 'vencida' ? t('Venció el') : t('Antes del')} {diaMes(p.fechaLimite)}
                         {p.fechaLimite.slice(0, 4) !== '2027' && `/${p.fechaLimite.slice(2, 4)}`}
                       </p>
                     )}
                   </div>
-                  {u === 'vencida' && <Chip tono="rojo">vencida</Chip>}
+                  {u === 'vencida' && <Chip tono="rojo">{t('vencida')}</Chip>}
                 </li>
               );
             })}
           </ul>
         ) : (
-          <p className="mt-2 text-muted">No queda nada pendiente. ¡Bien!</p>
+          <p className="mt-2 text-muted">{t('No queda nada pendiente. ¡Bien!')}</p>
         )}
         <button
           type="button"
           onClick={() => setTab('reservas')}
           className="mt-2 min-h-11 w-full rounded-full bg-sunken font-semibold text-rosa-ink active:opacity-70"
         >
-          Ver todas las reservas
+          {t('Ver todas las reservas')}
         </button>
       </section>
     </div>
@@ -258,9 +259,9 @@ function Despues({ dias, actividades, gastos }: { dias: Dia[]; actividades: Acti
   const total = dias.reduce((s, d) => s + gastoDelDia(d.id, actividades, gastos, tc), 0);
   return (
     <section className="card mx-auto max-w-xl p-5 text-center">
-      <p className="font-display text-[32px] font-semibold">¡Bienvenido de vuelta!</p>
+      <p className="font-display text-[32px] font-semibold">{t('¡Bienvenido de vuelta!')}</p>
       <p className="mt-2 text-muted">
-        Del {diaCorto(dias[0].fecha)} al {diaCorto(dias[dias.length - 1].fecha)} cargaste
+        {t('Del {desde} al {hasta} cargaste', { desde: diaCorto(dias[0].fecha), hasta: diaCorto(dias[dias.length - 1].fecha) })}
       </p>
       <p className="mt-1 text-2xl font-semibold tabular">
         <MontoMXN valor={total} />
@@ -270,7 +271,7 @@ function Despues({ dias, actividades, gastos }: { dias: Dia[]; actividades: Acti
         onClick={() => abrirMas('presupuesto')}
         className="mt-4 min-h-12 w-full rounded-full bg-rosa-ink px-4 font-semibold text-white active:opacity-80"
       >
-        Ver presupuesto y exportar
+        {t('Ver presupuesto y exportar')}
       </button>
     </section>
   );

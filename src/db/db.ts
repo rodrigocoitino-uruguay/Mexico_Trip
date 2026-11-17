@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
+import { IDIOMA } from '../lib/idioma';
 import type {
   Actividad,
   Ajustes,
@@ -40,7 +41,10 @@ export type ViajeDB = Dexie & {
 /** Versión del esquema de IndexedDB (también va en los respaldos). */
 export const SCHEMA_VERSION = 1;
 
-export function createDB(name = 'mexico-2027'): ViajeDB {
+/** La versión en inglés (para mostrar en una reunión) tiene su propia base: no mezcla los datos personales de la real. */
+const NOMBRE_DB = IDIOMA === 'en' ? 'mexico-2027-en' : 'mexico-2027';
+
+export function createDB(name = NOMBRE_DB): ViajeDB {
   const db = new Dexie(name) as ViajeDB;
   // Migraciones: nunca editar una versión publicada; agregar db.version(2)… con .upgrade().
   db.version(1).stores({

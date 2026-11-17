@@ -36,6 +36,36 @@ describe('aplicarSeed', () => {
   });
 });
 
+describe('registros retirados del seed', () => {
+  it('se sacan de quien ya los tenía y no vuelven al actualizar', async () => {
+    await aplicarSeed(db);
+    // Una instalación vieja: la tarea que ya no existe sigue cargada (con o sin tildar).
+    await db.pendientes.put({
+      id: 'p-empresa',
+      updatedAt: '2026-11-10T00:00:00.000Z',
+      delSeed: true,
+      orden: 5,
+      grupo: 'Reservar ya',
+      titulo: 'Confirmar con la empresa qué cubre',
+      fechaLimite: '2026-12-15',
+      hecho: false,
+    });
+    await db.meta.put({ key: 'seedVersion', value: 2 });
+    expect(await aplicarSeed(db)).toBe(true);
+    expect(await db.pendientes.get('p-empresa')).toBeUndefined();
+    expect(await db.pendientes.count()).toBe(SEED.pendientes.length);
+    expect((await db.meta.get('borradosSeed'))?.value).toContain('pendientes:p-empresa');
+  });
+
+  it('una tarea tuya con otro id no se toca', async () => {
+    await aplicarSeed(db);
+    await db.pendientes.put({ id: 'mia', updatedAt: '', orden: 1, grupo: 'Reservar ya', titulo: 'Mía', hecho: false });
+    await db.meta.put({ key: 'seedVersion', value: 2 });
+    await aplicarSeed(db);
+    expect(await db.pendientes.get('mia')).toBeDefined();
+  });
+});
+
 describe('planSeedSync (actualizar el seed sin pisar lo tuyo)', () => {
   const seed = SEED.actividades.filter((a) => a.diaId === '2027-02-13');
   const nuevo = seed.map((a) => (a.id === '2027-02-13-02' ? { ...a, descripcion: 'corregido' } : a));

@@ -1,3 +1,4 @@
+import { t } from '../../lib/i18n';
 import { X } from 'lucide-react';
 import { createContext, useContext, useEffect, useId, useRef, useState, type PointerEvent, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
@@ -155,7 +156,7 @@ export function Sheet({ open, onClose, title, header, headerSlot, children, bare
               </h2>
               {header && <div className="min-w-0 flex-1">{header}</div>}
               {headerSlot && <div ref={setSlot} className="min-w-0 flex-1" />}
-              <IconButton label="Cerrar" onClick={onClose} className="-mr-1">
+              <IconButton label={t('Cerrar')} onClick={onClose} className="-mr-1">
                 <X size={20} strokeWidth={1.5} />
               </IconButton>
             </div>
