@@ -15,7 +15,7 @@ const CSP = [
   "default-src 'self'",
   "script-src 'self'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  "img-src 'self' data: blob: https://commons.wikimedia.org https://upload.wikimedia.org",
   "font-src 'self'",
   "connect-src 'self'",
   "worker-src 'self'",
