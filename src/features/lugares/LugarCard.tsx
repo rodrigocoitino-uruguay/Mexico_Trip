@@ -1,4 +1,5 @@
 import { ExternalLink } from 'lucide-react';
+import { useState } from 'react';
 import { Chip } from '../../components/ui/Chip';
 import { ConUSD } from '../../components/ui/Montos';
 import { COLOR_CIUDAD } from '../../domain/ciudades';
@@ -8,13 +9,35 @@ import { diaCorto } from '../../lib/fechas';
 import { t } from '../../lib/i18n';
 import { ciudadMaps, mapsUrl } from '../../lib/maps';
 import { useUI } from '../../store/ui';
+import { FOTOS, urlFoto, urlPaginaFoto } from '../../data/fotos';
 
 /** Ficha de una atracción, restaurante o lugar de noche. */
 export function LugarCard({ l, extra }: { l: Lugar; extra?: string }) {
   const verDia = useUI((s) => s.verDia);
+  const foto = FOTOS[l.id];
+  const [fotoRota, setFotoRota] = useState(false);
   const ciudad = l.ciudad === 'Izamal/Valladolid' ? 'Izamal' : l.ciudad;
   return (
-    <article className={cx('card p-4', l.opcional && 'border-2 border-dashed border-cempa')}>
+    <article className={cx('card overflow-hidden p-4', l.opcional && 'border-2 border-dashed border-cempa')}>
+      {foto && !fotoRota && (
+        <figure className="-mx-4 -mt-4 mb-3">
+          <img
+            src={urlFoto(foto)}
+            alt={l.nombre}
+            loading="lazy"
+            decoding="async"
+            referrerPolicy="no-referrer"
+            onError={() => setFotoRota(true)}
+            className="aspect-[16/9] w-full bg-sunken object-cover"
+          />
+          <figcaption className="px-4 pt-1 text-[12px] text-muted">
+            {t('Foto:')} {foto.autor} ·{' '}
+            <a href={urlPaginaFoto(foto)} target="_blank" rel="noopener noreferrer" className="underline">
+              Wikimedia Commons
+            </a>
+          </figcaption>
+        </figure>
+      )}
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <p className="flex flex-wrap items-center gap-1.5">

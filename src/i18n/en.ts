@@ -27,6 +27,7 @@ export const EN: Record<string, string> = {
   Luego: 'Later',
   Actualizar: 'Update',
   Cerrar: 'Close',
+  'Foto:': 'Photo:',
   Viaje: 'Travel',
 
   // Hoy
