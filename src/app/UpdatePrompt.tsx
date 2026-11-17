@@ -1,4 +1,5 @@
 import { RefreshCw } from 'lucide-react';
+import { t } from '../lib/i18n';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 
 const CHECK_EVERY_MS = 60 * 60 * 1000;
@@ -23,16 +24,16 @@ export function UpdatePrompt() {
     >
       <div className="card flex max-w-full animate-rise items-center gap-2 py-1 pr-1 pl-4 text-[15px]">
         <RefreshCw size={16} className="shrink-0 text-rosa" aria-hidden="true" />
-        <span className="py-2">Hay una versión nueva</span>
+        <span className="py-2">{t('Hay una versión nueva')}</span>
         <button type="button" onClick={() => setNeedRefresh(false)} className="min-h-11 rounded-full px-3 text-muted">
-          Luego
+          {t('Luego')}
         </button>
         <button
           type="button"
           onClick={() => void updateServiceWorker(true)}
           className="min-h-11 rounded-full bg-rosa-ink px-4 font-medium text-white active:opacity-80"
         >
-          Actualizar
+          {t('Actualizar')}
         </button>
       </div>
     </div>

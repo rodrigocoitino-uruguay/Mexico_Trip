@@ -7,7 +7,15 @@ export type Moneda = 'MXN' | 'USD';
 /** Cómo de confiable es un dato del plan. Sin valor = dato del plan sin marca. */
 export type Fiabilidad = 'verificado' | 'estimado' | 'sin_verificar';
 
-export type Ciudad = 'CDMX' | 'Mérida' | 'Izamal/Valladolid' | 'Valladolid' | 'Cancún' | 'Cozumel' | 'Viaje';
+export type Ciudad =
+  | 'CDMX'
+  | 'Mérida'
+  | 'Izamal/Valladolid'
+  | 'Valladolid'
+  | 'Cancún'
+  | 'Playa del Carmen'
+  | 'Cozumel'
+  | 'Viaje';
 /** Ciudades con alojamiento a elegir (las del núcleo del viaje). */
 export type CiudadAlojamiento = 'CDMX' | 'Mérida' | 'Valladolid';
 
@@ -35,7 +43,7 @@ export interface Dia extends Registro {
   detalle: 'completo' | 'simple';
   /** En qué ciudad dormís esa noche, para vincular el alojamiento reservado o recomendado. */
   nocheEn?: CiudadAlojamiento;
-  /** Texto de dónde dormís cuando no hay alojamiento a elegir (avión, retreat, Cancún). */
+  /** Texto de dónde dormís cuando no hay alojamiento a elegir (avión, retreat, Cancún, Playa del Carmen). */
   nocheTexto?: string;
   /** Clima esperado (texto estático del plan, sin API). */
   clima?: string;

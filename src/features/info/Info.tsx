@@ -23,6 +23,7 @@ import { editarContacto } from '../../db/pendientes';
 import { linkSeguro } from '../../domain/reservas';
 import type { Contacto } from '../../domain/types';
 import { cx } from '../../lib/cx';
+import { t } from '../../lib/i18n';
 import { toast } from '../../store/toast';
 
 const ICONOS: Record<string, LucideIcon> = {
@@ -79,7 +80,7 @@ function Contactos({ contactos }: { contactos: Contacto[] }) {
   return (
     <section aria-labelledby="contactos" className="pt-3">
       <h2 id="contactos" className="font-display text-xl font-semibold">
-        Contactos
+        {t('Contactos')}
       </h2>
       <ul className="card mt-2 divide-y divide-line overflow-hidden">
         {[...contactos]
@@ -101,7 +102,7 @@ function Contactos({ contactos }: { contactos: Contacto[] }) {
                 {c.telefono && (
                   <a
                     href={`tel:${c.telefono.replace(/[^\d+]/g, '')}`}
-                    aria-label={`Llamar a ${c.nombre}`}
+                    aria-label={t('Llamar a {nombre}', { nombre: c.nombre })}
                     className="grid size-11 shrink-0 place-items-center rounded-full bg-verde-soft text-verde"
                   >
                     <Phone size={18} aria-hidden="true" />
@@ -110,7 +111,7 @@ function Contactos({ contactos }: { contactos: Contacto[] }) {
                 {c.email && (
                   <a
                     href={`mailto:${c.email}`}
-                    aria-label={`Escribir a ${c.nombre}`}
+                    aria-label={t('Escribir a {nombre}', { nombre: c.nombre })}
                     className="grid size-11 shrink-0 place-items-center rounded-full bg-azul-soft text-azul"
                   >
                     <Mail size={18} aria-hidden="true" />
@@ -119,7 +120,7 @@ function Contactos({ contactos }: { contactos: Contacto[] }) {
                 <button
                   type="button"
                   onClick={() => setEditando(c)}
-                  aria-label={`Editar ${c.nombre}`}
+                  aria-label={t('Editar {nombre}', { nombre: c.nombre })}
                   className="grid size-11 shrink-0 place-items-center rounded-full text-muted active:bg-sunken"
                 >
                   <Pencil size={17} aria-hidden="true" />
@@ -128,7 +129,7 @@ function Contactos({ contactos }: { contactos: Contacto[] }) {
             );
           })}
       </ul>
-      <Sheet open={!!editando} onClose={() => setEditando(null)} title={editando?.nombre ?? 'Contacto'}>
+      <Sheet open={!!editando} onClose={() => setEditando(null)} title={editando?.nombre ?? t('Contacto')}>
         {editando && <ContactoForm key={editando.id} c={editando} onListo={() => setEditando(null)} />}
       </Sheet>
     </section>
@@ -158,10 +159,10 @@ function ContactoForm({ c, onListo }: { c: Contacto; onListo: () => void }) {
       noValidate
       onSubmit={(e) => {
         e.preventDefault();
-        if (!v.nombre.trim()) return setError('Poné un nombre.');
-        if (v.web.trim() && !linkSeguro(v.web)) return setError('La web no parece una dirección válida.');
+        if (!v.nombre.trim()) return setError(t('Poné un nombre.'));
+        if (v.web.trim() && !linkSeguro(v.web)) return setError(t('La web no parece una dirección válida.'));
         void editarContacto(c.id, v).then(() => {
-          toast('Contacto guardado');
+          toast(t('Contacto guardado'));
           onListo();
         });
       }}
@@ -169,7 +170,7 @@ function ContactoForm({ c, onListo }: { c: Contacto; onListo: () => void }) {
       {filas.map((f) => (
         <div key={f.k}>
           <label htmlFor={`ct-${f.k}`} className="mb-1 block text-sm font-semibold">
-            {f.label}
+            {t(f.label)}
           </label>
           <input
             id={`ct-${f.k}`}
@@ -190,7 +191,7 @@ function ContactoForm({ c, onListo }: { c: Contacto; onListo: () => void }) {
         </p>
       )}
       <button type="submit" className={cx('min-h-12 w-full rounded-full bg-rosa-ink font-semibold text-white active:opacity-80')}>
-        Guardar
+        {t('Guardar')}
       </button>
     </form>
   );
@@ -205,9 +206,9 @@ export function PlanB() {
         .sort((a, b) => a.orden - b.orden)
         .map((p) => (
           <li key={p.id} className="card p-4">
-            <p className="text-[13px] font-semibold tracking-wide text-rojo uppercase">Si pasa esto</p>
+            <p className="text-[13px] font-semibold tracking-wide text-rojo uppercase">{t('Si pasa esto')}</p>
             <p className="font-semibold leading-snug">{p.si}</p>
-            <p className="mt-2 text-[13px] font-semibold tracking-wide text-verde uppercase">Hacé esto</p>
+            <p className="mt-2 text-[13px] font-semibold tracking-wide text-verde uppercase">{t('Hacé esto')}</p>
             <p className="leading-snug">
               <ConUSD texto={p.entonces} />
             </p>

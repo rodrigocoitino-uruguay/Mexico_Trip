@@ -6,6 +6,7 @@ import { Sheet } from '../../components/ui/Sheet';
 import { comprarItem, descomprarItem } from '../../db/reservas';
 import type { Tramo, Vuelo } from '../../domain/types';
 import { cx } from '../../lib/cx';
+import { t } from '../../lib/i18n';
 import { diaCorto } from '../../lib/fechas';
 import { toast } from '../../store/toast';
 import { DatosReserva, ReservaForm } from './ReservaForm';
@@ -17,14 +18,14 @@ export function Transporte({ vuelos, tramos }: { vuelos: Vuelo[]; tramos: Tramo[
   const nombre = (i: Item) => (i.tabla === 'vuelos' ? `${i.v.origenCodigo} → ${i.v.destinoCodigo}` : i.v.nombre);
 
   const deshacer = (i: Item) =>
-    void descomprarItem(i.tabla, i.v.id).then(() => toast(`${nombre(i)}: vuelve a pendiente`));
+    void descomprarItem(i.tabla, i.v.id).then(() => toast(t('{nombre}: vuelve a pendiente', { nombre: nombre(i) })));
 
   return (
     <div className="space-y-6">
       {vuelos.length > 0 && (
         <section aria-labelledby="vuelos" className="space-y-3">
           <h2 id="vuelos" className="font-display text-xl font-semibold">
-            Vuelos
+            {t('Vuelos')}
           </h2>
           {vuelos.map((v) => (
             <BoardingPass
@@ -40,20 +41,20 @@ export function Transporte({ vuelos, tramos }: { vuelos: Vuelo[]; tramos: Tramo[
       {tramos.length > 0 && (
         <section aria-labelledby="tramos" className="space-y-3">
           <h2 id="tramos" className="font-display text-xl font-semibold">
-            Tramos
+            {t('Tramos')}
           </h2>
-          {tramos.map((t) => (
+          {tramos.map((tr) => (
             <TramoCard
-              key={t.id}
-              t={t}
-              onComprar={() => setForm({ tabla: 'tramos', v: t })}
-              onDeshacer={() => deshacer({ tabla: 'tramos', v: t })}
+              key={tr.id}
+              tr={tr}
+              onComprar={() => setForm({ tabla: 'tramos', v: tr })}
+              onDeshacer={() => deshacer({ tabla: 'tramos', v: tr })}
             />
           ))}
         </section>
       )}
 
-      <Sheet open={!!form} onClose={() => setForm(null)} title={form ? `Lo compré · ${nombre(form)}` : 'Lo compré'}>
+      <Sheet open={!!form} onClose={() => setForm(null)} title={form ? `${t('Lo compré')} · ${nombre(form)}` : t('Lo compré')}>
         {form && (
           <ReservaForm
             key={form.v.id}
@@ -61,11 +62,11 @@ export function Transporte({ vuelos, tramos }: { vuelos: Vuelo[]; tramos: Tramo[
             conCheckout={false}
             monedaDefault="MXN"
             checkInDefault={form.v.fecha}
-            textoGuardar="Guardar"
+            textoGuardar={t('Guardar')}
             onCancelar={() => setForm(null)}
             onGuardar={async (r) => {
               const auto = await comprarItem(form.tabla, form.v.id, r);
-              toast(auto.length ? `Listo. También marqué como hecho: ${auto.join(', ')}` : 'Marcado como comprado', {
+              toast(auto.length ? t('Listo. También marqué como hecho: {lista}', { lista: auto.join(', ') }) : t('Marcado como comprado'), {
                 duration: 5000,
               });
               setForm(null);
@@ -108,19 +109,19 @@ function BoardingPass({ v, onComprar, onDeshacer }: { v: Vuelo; onComprar: () =>
       <div aria-hidden="true" className="mx-4 my-3 border-t-2 border-dashed border-line" />
       <dl className="grid grid-cols-2 gap-x-3 gap-y-1 px-4 text-[14px]">
         <div>
-          <dt className="text-muted">Escala</dt>
+          <dt className="text-muted">{t('Escala')}</dt>
           <dd className="font-medium">{v.escala}</dd>
         </div>
         <div>
-          <dt className="text-muted">Tarifa</dt>
+          <dt className="text-muted">{t('Tarifa')}</dt>
           <dd className="font-medium">{v.tarifa}</dd>
         </div>
         <div className="col-span-2">
-          <dt className="text-muted">Equipaje</dt>
+          <dt className="text-muted">{t('Equipaje')}</dt>
           <dd className="font-medium">{v.equipaje}</dd>
         </div>
         <div className="col-span-2">
-          <dt className="text-muted">Costo</dt>
+          <dt className="text-muted">{t('Costo')}</dt>
           <dd className="font-medium">
             <ConUSD texto={v.costo} />
           </dd>
@@ -130,8 +131,8 @@ function BoardingPass({ v, onComprar, onDeshacer }: { v: Vuelo; onComprar: () =>
         <p className="text-[14px] leading-snug text-muted">{v.notas}</p>
         {comprado && v.reserva && <DatosReserva r={v.reserva} />}
         <div className="mt-3 flex items-center gap-2">
-          {comprado ? <Chip tono="verde">comprado</Chip> : <Chip tono="cempa">pendiente</Chip>}
-          {v.pagaEmpresa && <Chip tono="azul">paga la empresa</Chip>}
+          {comprado ? <Chip tono="verde">{t('comprado')}</Chip> : <Chip tono="cempa">{t('pendiente')}</Chip>}
+          {v.pagaEmpresa && <Chip tono="azul">{t('paga la empresa')}</Chip>}
         </div>
         {v.modificable && (
           <BotonesCompra comprado={comprado} onComprar={onComprar} onDeshacer={onDeshacer} />
@@ -142,7 +143,7 @@ function BoardingPass({ v, onComprar, onDeshacer }: { v: Vuelo; onComprar: () =>
             onClick={onComprar}
             className="mt-3 min-h-11 w-full rounded-full bg-sunken font-semibold active:opacity-70"
           >
-            {v.reserva ? 'Editar código y notas' : 'Agregar código y notas'}
+            {v.reserva ? t('Editar código y notas') : t('Agregar código y notas')}
           </button>
         )}
       </div>
@@ -150,40 +151,40 @@ function BoardingPass({ v, onComprar, onDeshacer }: { v: Vuelo; onComprar: () =>
   );
 }
 
-function TramoCard({ t, onComprar, onDeshacer }: { t: Tramo; onComprar: () => void; onDeshacer: () => void }) {
-  const comprado = t.estado === 'comprado';
+function TramoCard({ tr, onComprar, onDeshacer }: { tr: Tramo; onComprar: () => void; onDeshacer: () => void }) {
+  const comprado = tr.estado === 'comprado';
   return (
     <article className={cx('card p-4', comprado && 'ring-2 ring-verde')}>
       <p className="flex flex-wrap items-center gap-2 text-[14px] text-muted">
-        {t.fecha && <span>{diaCorto(t.fecha)}</span>}
-        {comprado && <Chip tono="verde">comprado</Chip>}
+        {tr.fecha && <span>{diaCorto(tr.fecha)}</span>}
+        {comprado && <Chip tono="verde">{t('comprado')}</Chip>}
       </p>
-      <h3 className="text-[17px] leading-snug font-semibold">{t.nombre}</h3>
+      <h3 className="text-[17px] leading-snug font-semibold">{tr.nombre}</h3>
       <p className="mt-2 rounded-xl bg-azul-soft/60 p-2 text-[15px] leading-snug">
-        <span className="font-semibold text-azul">Recomendado: </span>
-        {t.recomendada}
+        <span className="font-semibold text-azul">{t('Recomendado:')} </span>
+        {tr.recomendada}
       </p>
       <dl className="mt-2 space-y-1 text-[14px] leading-snug">
         <div>
-          <dt className="inline text-muted">Opciones: </dt>
-          <dd className="inline">{t.opciones}</dd>
+          <dt className="inline text-muted">{t('Opciones:')} </dt>
+          <dd className="inline">{tr.opciones}</dd>
         </div>
         <div>
-          <dt className="inline text-muted">Costo: </dt>
+          <dt className="inline text-muted">{t('Costo:')} </dt>
           <dd className="inline">
-            <ConUSD texto={t.costo} />
+            <ConUSD texto={tr.costo} />
           </dd>
         </div>
-        {t.duracion && (
+        {tr.duracion && (
           <div>
-            <dt className="inline text-muted">Duración: </dt>
-            <dd className="inline">{t.duracion}</dd>
+            <dt className="inline text-muted">{t('Duración:')} </dt>
+            <dd className="inline">{tr.duracion}</dd>
           </div>
         )}
       </dl>
-      {comprado && t.reserva && <DatosReserva r={t.reserva} />}
+      {comprado && tr.reserva && <DatosReserva r={tr.reserva} />}
       {/* Los tramos sin fecha (moverse dentro de CDMX) no se compran. */}
-      {t.fecha && <BotonesCompra comprado={comprado} onComprar={onComprar} onDeshacer={onDeshacer} />}
+      {tr.fecha && <BotonesCompra comprado={comprado} onComprar={onComprar} onDeshacer={onDeshacer} />}
     </article>
   );
 }
@@ -200,15 +201,15 @@ function BotonesCompra({
   return comprado ? (
     <div className="mt-3 flex gap-2">
       <button type="button" onClick={onComprar} className="min-h-11 flex-1 rounded-full bg-sunken font-semibold active:opacity-70">
-        Editar datos
+        {t('Editar datos')}
       </button>
       <button type="button" onClick={onDeshacer} className="min-h-11 flex-1 rounded-full font-semibold text-rojo active:bg-rojo-soft">
-        No lo compré
+        {t('No lo compré')}
       </button>
     </div>
   ) : (
     <button type="button" onClick={onComprar} className="mt-3 min-h-12 w-full rounded-full bg-verde font-semibold text-white active:opacity-80">
-      Lo compré
+      {t('Lo compré')}
     </button>
   );
 }

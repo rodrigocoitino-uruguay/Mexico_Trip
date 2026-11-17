@@ -26,7 +26,7 @@ export const PRESUPUESTO: PlanPresupuesto = {
   ],
   totalSemana: { bajo: 497, central: 706, alto: 1033 },
   despues: [
-    { concepto: 'Finde en Cancún, 3 noches (sin verificar)', usd: 175 },
+    { concepto: 'Finde en Cancún y Playa del Carmen, 3 noches (sin verificar)', usd: 175 },
     { concepto: 'Noche del 26/2 (solo si la empresa no la cubre)', usd: 55 },
     { concepto: 'Noche del 27/2', usd: 50 },
     { concepto: 'Visitax de Quintana Roo', usd: 16 },
@@ -63,7 +63,7 @@ export const RESUMEN: ResumenViaje = {
     'El lunes 15, con los museos de CDMX cerrados, toca Teotihuacán, que abre todos los días.',
   ],
   despues: [
-    'Fin de semana en Cancún con el equipo (20 al 22/2).',
+    'Fin de semana con el equipo: sábado 20 en Cancún y domingo 21 y lunes 22 en Playa del Carmen (a confirmar).',
     'Retreat de la empresa en Cozumel (23 al 26/2), con estadía y comida pagas por la empresa.',
     'Noches del 26 y 27/2 en Cancún (la del 26 solo si la empresa no la cubre) y vuelta el 28/2.',
   ],

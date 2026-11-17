@@ -751,9 +751,10 @@ export const SEED_ACTIVIDADES: Actividad[] = [
     {
       hora: '',
       categoria: 'descanso',
-      titulo: 'Cancún con el equipo',
-      descripcion: 'Fin de semana con el equipo. Sin plan detallado.',
-      costoTexto: 'Finde: USD 175 por 3 noches (estimado sin verificar)',
+      titulo: 'Playa del Carmen con el equipo',
+      descripcion:
+        'A confirmar: se propone pasar el domingo y el lunes en Playa del Carmen en lugar de Cancún, porque dicen que es más lindo. Sin plan detallado.',
+      costoTexto: 'Finde: USD 175 por 3 noches (estimado de Cancún, sin verificar para Playa del Carmen)',
       fiabilidad: 'sin_verificar',
     },
   ]),
@@ -761,9 +762,10 @@ export const SEED_ACTIVIDADES: Actividad[] = [
     {
       hora: '',
       categoria: 'descanso',
-      titulo: 'Cancún con el equipo',
-      descripcion: 'Fin de semana con el equipo. Sin plan detallado.',
-      costoTexto: 'Finde: USD 175 por 3 noches (estimado sin verificar)',
+      titulo: 'Playa del Carmen con el equipo',
+      descripcion:
+        'A confirmar: se propone pasar el domingo y el lunes en Playa del Carmen en lugar de Cancún, porque dicen que es más lindo. Sin plan detallado.',
+      costoTexto: 'Finde: USD 175 por 3 noches (estimado de Cancún, sin verificar para Playa del Carmen)',
       fiabilidad: 'sin_verificar',
     },
   ]),
@@ -773,9 +775,9 @@ export const SEED_ACTIVIDADES: Actividad[] = [
     {
       hora: '',
       categoria: 'traslado',
-      titulo: 'Traslado Cancún → Cozumel',
+      titulo: 'Traslado a Cozumel',
       descripcion:
-        'Pendiente confirmar si la empresa paga el traslado. En febrero hay "nortes" y el ferry puede cancelarse por viento.',
+        'Si el finde es en Playa del Carmen, el ferry a Cozumel sale de ahí (a confirmar). Pendiente confirmar si la empresa paga el traslado. En febrero hay "nortes" y el ferry puede cancelarse por viento.',
       fiabilidad: 'sin_verificar',
     },
     {
