@@ -26,7 +26,6 @@ export function LugarCard({ l, extra }: { l: Lugar; extra?: string }) {
             alt={l.nombre}
             loading="lazy"
             decoding="async"
-            referrerPolicy="no-referrer"
             onError={() => setFotoRota(true)}
             className="aspect-[16/9] w-full bg-sunken object-cover"
           />
