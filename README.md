@@ -6,7 +6,7 @@ App web instalable (PWA) para acompañar el viaje a México del **11/2 al 1/3/20
 - **Tus datos quedan solo en tu dispositivo** (IndexedDB): lo que marcás, notas, gastos y códigos de reserva. El repositorio tiene solo el código y el itinerario.
 - **Costo cero**: GitHub Pages, sin servidor ni cuentas.
 
-**App publicada:** https://rodrigocoitino-uruguay.github.io/cuaderno/
+**App publicada:** https://rodrigocoitino-uruguay.github.io/Mexico_Trip/
 
 ---
 
@@ -14,7 +14,7 @@ App web instalable (PWA) para acompañar el viaje a México del **11/2 al 1/3/20
 
 **iPhone (Safari)**
 
-1. Abrí **https://rodrigocoitino-uruguay.github.io/cuaderno/** en **Safari**.
+1. Abrí **https://rodrigocoitino-uruguay.github.io/Mexico_Trip/** en **Safari**.
 2. Tocá **Compartir** (el cuadrado con la flecha hacia arriba).
 3. **Agregar a pantalla de inicio** → **Agregar**.
 4. Abrila siempre desde el ícono (dos banderitas de papel picado). Instalada, funciona en modo avión.
@@ -69,7 +69,7 @@ Requisitos: **Node.js 22** (`brew install node@22`).
 
 ```bash
 npm ci          # instala exactamente las versiones del package-lock
-npm run dev     # http://localhost:5174/cuaderno/
+npm run dev     # http://localhost:5174/Mexico_Trip/
 npm test        # tests (Vitest)
 npm run build   # chequeo de tipos + build en dist/
 npm run preview # sirve dist/ (el build real, con modo sin conexión)
@@ -90,8 +90,8 @@ Cuando hay una versión nueva, la app instalada muestra **"Hay una versión nuev
 
 Configuración inicial (ya hecha; queda por si hay que repetirla):
 
-1. `gh repo create <usuario>/cuaderno --public`
-2. `gh api -X POST repos/<usuario>/cuaderno/pages -f build_type=workflow`
+1. `gh repo create <usuario>/Mexico_Trip --public`
+2. `gh api -X POST repos/<usuario>/Mexico_Trip/pages -f build_type=workflow`
 3. Si el repositorio se llama distinto, cambiar `REPO_BASE` en `vite.config.ts`.
 4. `git push -u origin main`
 

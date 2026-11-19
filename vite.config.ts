@@ -5,7 +5,7 @@ import { defineConfig, type Plugin } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 /** Nombre del repositorio en GitHub: la app se publica en https://<usuario>.github.io/<repo>/ */
-const REPO_BASE = '/cuaderno/';
+const REPO_BASE = '/Mexico_Trip/';
 
 /**
  * Content-Security-Policy (solo en el build de producción; el modo dev de Vite
